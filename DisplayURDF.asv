@@ -1,0 +1,12 @@
+function Robot=GenerateRobot(urdf)
+
+disp("Showing Robot")
+Robot=importrobot('panda.urdf')
+i=0
+
+
+%Robot.DataFormat='row'
+while(true)
+show(Robot,Robot.randomConfiguration,Visuals="on")
+drawnow
+end

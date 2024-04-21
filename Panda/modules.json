@@ -1,0 +1,591 @@
+{
+  "modules": [
+    {
+      "header": {
+        "ID": "panda",
+        "name": "panda",
+        "date": "2023-03-01",
+        "author": [
+          "Matthias Mayer",
+          "Jonathan Kuelz",
+          "Panda Author"
+        ],
+        "email": [
+          "matthias.mayer@tum.de"
+        ],
+        "affiliation": [
+          "Technical University of Munich"
+        ],
+        "cost": 0.0
+      },
+      "bodies": [
+        {
+          "ID": "panda_link0_0",
+          "mass": 0.629769,
+          "inertia": [
+            [ 0.00315, 8.2904e-07, 0.00015 ],
+            [ 8.2904e-07, 0.00388, 8.2299e-06 ],
+            [ 0.00015, 8.2299e-06, 0.004285 ]
+          ],
+          "r_com": [ -0.041018, -0.00014, 0.049974 ],
+          "connectors": [
+            {
+              "ID": "base",
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, -1.0, 1.2246467991473532e-16, 0.0 ],
+                [ 0.0, -1.2246467991473532e-16, -1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ],
+              "gender": "h",
+              "type": "base",
+              "size": []
+            }
+          ],
+          "visual": [
+            {
+              "type": "mesh",
+              "parameters": {
+                "file": "meshes/visual/link0.dae",
+                "scale": [ 1.0, 1.0, 1.0 ]
+              },
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ]
+            }
+          ],
+          "collision": [
+            {
+              "type": "mesh",
+              "parameters": {
+                "file": "meshes/collision/link0.stl",
+                "scale": [ 1.0, 1.0, 1.0 ]
+              },
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ]
+            }
+          ]
+        },
+        {
+          "ID": "panda_link1_0",
+          "mass": 4.970684,
+          "inertia": [
+            [ 0.70337, -0.000139, 0.006772 ],
+            [ -0.000139, 0.70661, 0.019169 ],
+            [ 0.006772, 0.019169, 0.009117 ]
+          ],
+          "r_com": [ 0.003875, 0.002081, -0.04762 ],
+          "connectors": [],
+          "visual": [
+            {
+              "type": "mesh",
+              "parameters": {
+                "file": "meshes/visual/link1.dae",
+                "scale": [ 1.0, 1.0, 1.0 ]
+              },
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ]
+            }
+          ],
+          "collision": [
+            {
+              "type": "mesh",
+              "parameters": {
+                "file": "meshes/collision/link1.stl",
+                "scale": [ 1.0, 1.0, 1.0 ]
+              },
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ]
+            }
+          ]
+        },
+        {
+          "ID": "panda_link2_0",
+          "mass": 0.646926,
+          "inertia": [
+            [ 0.007962, -0.003925, 0.010254 ],
+            [ -0.003925, 0.02811, 0.000704 ],
+            [ 0.010254, 0.000704, 0.025995 ]
+          ],
+          "r_com": [ -0.003141, -0.02872, 0.003495 ],
+          "connectors": [],
+          "visual": [
+            {
+              "type": "mesh",
+              "parameters": {
+                "file": "meshes/visual/link2.dae",
+                "scale": [ 1.0, 1.0, 1.0 ]
+              },
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ]
+            }
+          ],
+          "collision": [
+            {
+              "type": "mesh",
+              "parameters": {
+                "file": "meshes/collision/link2.stl",
+                "scale": [ 1.0, 1.0, 1.0 ]
+              },
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ]
+            }
+          ]
+        },
+        {
+          "ID": "panda_link3_0",
+          "mass": 3.228604,
+          "inertia": [
+            [ 0.037242, -0.004761, -0.011396 ],
+            [ -0.004761, 0.036155, -0.012805 ],
+            [ -0.011396, -0.012805, 0.01083 ]
+          ],
+          "r_com": [ 0.027518, 0.039252, -0.066502 ],
+          "connectors": [],
+          "visual": [
+            {
+              "type": "mesh",
+              "parameters": {
+                "file": "meshes/visual/link3.dae",
+                "scale": [ 1.0, 1.0, 1.0 ]
+              },
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ]
+            }
+          ],
+          "collision": [
+            {
+              "type": "mesh",
+              "parameters": {
+                "file": "meshes/collision/link3.stl",
+                "scale": [ 1.0, 1.0, 1.0 ]
+              },
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ]
+            }
+          ]
+        },
+        {
+          "ID": "panda_link4_0",
+          "mass": 3.587895,
+          "inertia": [
+            [ 0.025853, 0.007796, -0.001332 ],
+            [ 0.007796, 0.019552, 0.008641 ],
+            [ -0.001332, 0.008641, 0.028323 ]
+          ],
+          "r_com": [ -0.05316999999999999, 0.10441899999999997, 0.027453999999999992 ],
+          "connectors": [],
+          "visual": [
+            {
+              "type": "mesh",
+              "parameters": {
+                "file": "meshes/visual/link4.dae",
+                "scale": [ 1.0, 1.0, 1.0 ]
+              },
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ]
+            }
+          ],
+          "collision": [
+            {
+              "type": "mesh",
+              "parameters": {
+                "file": "meshes/collision/link4.stl",
+                "scale": [ 1.0, 1.0, 1.0 ]
+              },
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ]
+            }
+          ]
+        },
+        {
+          "ID": "panda_link5_0",
+          "mass": 1.225946,
+          "inertia": [
+            [ 0.035549, -0.002117, -0.004037 ],
+            [ -0.002117, 0.029474, 0.000229 ],
+            [ -0.004037, 0.000229, 0.008627 ]
+          ],
+          "r_com": [ -0.011953, 0.041065, -0.038437 ],
+          "connectors": [],
+          "visual": [
+            {
+              "type": "mesh",
+              "parameters": {
+                "file": "meshes/visual/link5.dae",
+                "scale": [ 1.0, 1.0, 1.0 ]
+              },
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ]
+            }
+          ],
+          "collision": [
+            {
+              "type": "mesh",
+              "parameters": {
+                "file": "meshes/collision/link5.stl",
+                "scale": [ 1.0, 1.0, 1.0 ]
+              },
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ]
+            }
+          ]
+        },
+        {
+          "ID": "panda_link6_0",
+          "mass": 1.666555,
+          "inertia": [
+            [ 0.0019640000000000005, 0.000109, -0.001158 ],
+            [ 0.000109, 0.004354, 0.000341 ],
+            [ -0.001158, 0.000341, 0.005433 ]
+          ],
+          "r_com": [ 0.060149, -0.014117, -0.010517 ],
+          "connectors": [],
+          "visual": [
+            {
+              "type": "mesh",
+              "parameters": {
+                "file": "meshes/visual/link6.dae",
+                "scale": [ 1.0, 1.0, 1.0 ]
+              },
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ]
+            }
+          ],
+          "collision": [
+            {
+              "type": "mesh",
+              "parameters": {
+                "file": "meshes/collision/link6.stl",
+                "scale": [ 1.0, 1.0, 1.0 ]
+              },
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ]
+            }
+          ]
+        },
+        {
+          "ID": "panda_link7_0",
+          "mass": 0.735522,
+          "inertia": [
+            [ 0.012516, -0.000428, -0.001196 ],
+            [ -0.000428, 0.010027, -0.000741 ],
+            [ -0.001196, -0.000741, 0.004815 ]
+          ],
+          "r_com": [ 0.010517, -0.004252, 0.061597 ],
+          "connectors": [
+            {
+              "ID": "panda_joint8",
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.107 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ],
+              "gender": "h",
+              "type": "",
+              "size": []
+            }
+          ],
+          "visual": [
+            {
+              "type": "mesh",
+              "parameters": {
+                "file": "meshes/visual/link7.dae",
+                "scale": [ 1.0, 1.0, 1.0 ]
+              },
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ]
+            }
+          ],
+          "collision": [
+            {
+              "type": "mesh",
+              "parameters": {
+                "file": "meshes/collision/link7.stl",
+                "scale": [ 1.0, 1.0, 1.0 ]
+              },
+              "pose": [
+                [ 1.0, 0.0, 0.0, 0.0 ],
+                [ 0.0, 1.0, 0.0, 0.0 ],
+                [ 0.0, 0.0, 1.0, 0.0 ],
+                [ 0.0, 0.0, 0.0, 1.0 ]
+              ]
+            }
+          ]
+        }
+      ],
+      "joints": [
+        {
+          "ID": "panda_joint1",
+          "parent": "panda_link0_0",
+          "child": "panda_link1_0",
+          "type": "revolute",
+          "passive": false,
+          "poseParent": [
+            [ 1.0, 0.0, 0.0, 0.0 ],
+            [ 0.0, 1.0, 0.0, 0.0 ],
+            [ 0.0, 0.0, 1.0, 0.333 ],
+            [ 0.0, 0.0, 0.0, 1.0 ]
+          ],
+          "poseChild": [
+            [ 1.0, 0.0, 0.0, 0.0 ],
+            [ 0.0, 1.0, 0.0, 0.0 ],
+            [ 0.0, 0.0, 1.0, 0.0 ],
+            [ 0.0, 0.0, 0.0, 1.0 ]
+          ],
+          "limits": {
+            "positionLower": -2.9671,
+            "positionUpper": 2.9671,
+            "peakTorque": 87.0,
+            "velocity": 2.5,
+            "acceleration": Infinity
+          },
+          "gearRatio": 1.0,
+          "motorInertia": 0.0,
+          "frictionCoulomb": 0.0,
+          "frictionViscous": 0.003
+        },
+        {
+          "ID": "panda_joint2",
+          "parent": "panda_link1_0",
+          "child": "panda_link2_0",
+          "type": "revolute",
+          "passive": false,
+          "poseParent": [
+            [ 1.0, 0.0, 0.0, 0.0 ],
+            [ 0.0, 2.220446049250313e-16, 1.0, 0.0 ],
+            [ 0.0, -1.0, 2.220446049250313e-16, 0.0 ],
+            [ 0.0, 0.0, 0.0, 1.0 ]
+          ],
+          "poseChild": [
+            [ 1.0, 0.0, 0.0, 0.0 ],
+            [ 0.0, 1.0, 0.0, 0.0 ],
+            [ 0.0, 0.0, 1.0, 0.0 ],
+            [ 0.0, 0.0, 0.0, 1.0 ]
+          ],
+          "limits": {
+            "positionLower": -1.8326,
+            "positionUpper": 1.8326,
+            "peakTorque": 87.0,
+            "velocity": 2.5,
+            "acceleration": Infinity
+          },
+          "gearRatio": 1.0,
+          "motorInertia": 0.0,
+          "frictionCoulomb": 0.0,
+          "frictionViscous": 0.003
+        },
+        {
+          "ID": "panda_joint3",
+          "parent": "panda_link2_0",
+          "child": "panda_link3_0",
+          "type": "revolute",
+          "passive": false,
+          "poseParent": [
+            [ 1.0, 0.0, 0.0, 0.0 ],
+            [ 0.0, 2.220446049250313e-16, -1.0, -0.316 ],
+            [ 0.0, 1.0, 2.220446049250313e-16, 0.0 ],
+            [ 0.0, 0.0, 0.0, 1.0 ]
+          ],
+          "poseChild": [
+            [ 1.0, 0.0, 0.0, 0.0 ],
+            [ 0.0, 1.0, 0.0, 0.0 ],
+            [ 0.0, 0.0, 1.0, 0.0 ],
+            [ 0.0, 0.0, 0.0, 1.0 ]
+          ],
+          "limits": {
+            "positionLower": -2.9671,
+            "positionUpper": 2.9671,
+            "peakTorque": 87.0,
+            "velocity": 2.5,
+            "acceleration": Infinity
+          },
+          "gearRatio": 1.0,
+          "motorInertia": 0.0,
+          "frictionCoulomb": 0.0,
+          "frictionViscous": 0.003
+        },
+        {
+          "ID": "panda_joint4",
+          "parent": "panda_link3_0",
+          "child": "panda_link4_0",
+          "type": "revolute",
+          "passive": false,
+          "poseParent": [
+            [ 1.0, 0.0, 0.0, 0.0825 ],
+            [ 0.0, 2.220446049250313e-16, -1.0, 0.0 ],
+            [ 0.0, 1.0, 2.220446049250313e-16, 0.0 ],
+            [ 0.0, 0.0, 0.0, 1.0 ]
+          ],
+          "poseChild": [
+            [ 1.0, 0.0, 0.0, 0.0 ],
+            [ 0.0, 1.0, 0.0, 0.0 ],
+            [ 0.0, 0.0, 1.0, 0.0 ],
+            [ 0.0, 0.0, 0.0, 1.0 ]
+          ],
+          "limits": {
+            "positionLower": -3.1416,
+            "positionUpper": -0.4,
+            "peakTorque": 87.0,
+            "velocity": 2.5,
+            "acceleration": Infinity
+          },
+          "gearRatio": 1.0,
+          "motorInertia": 0.0,
+          "frictionCoulomb": 0.0,
+          "frictionViscous": 0.003
+        },
+        {
+          "ID": "panda_joint5",
+          "parent": "panda_link4_0",
+          "child": "panda_link5_0",
+          "type": "revolute",
+          "passive": false,
+          "poseParent": [
+            [ 1.0, 0.0, 0.0, -0.0825 ],
+            [ 0.0, 2.220446049250313e-16, 1.0, 0.384 ],
+            [ 0.0, -1.0, 2.220446049250313e-16, 0.0 ],
+            [ 0.0, 0.0, 0.0, 1.0 ]
+          ],
+          "poseChild": [
+            [ 1.0, 0.0, 0.0, 0.0 ],
+            [ 0.0, 1.0, 0.0, 0.0 ],
+            [ 0.0, 0.0, 1.0, 0.0 ],
+            [ 0.0, 0.0, 0.0, 1.0 ]
+          ],
+          "limits": {
+            "positionLower": -2.9671,
+            "positionUpper": 2.9671,
+            "peakTorque": 12.0,
+            "velocity": 3.0,
+            "acceleration": Infinity
+          },
+          "gearRatio": 1.0,
+          "motorInertia": 0.0,
+          "frictionCoulomb": 0.0,
+          "frictionViscous": 0.003
+        },
+        {
+          "ID": "panda_joint6",
+          "parent": "panda_link5_0",
+          "child": "panda_link6_0",
+          "type": "revolute",
+          "passive": false,
+          "poseParent": [
+            [ 1.0, 0.0, 0.0, 0.0 ],
+            [ 0.0, 2.220446049250313e-16, -1.0, 0.0 ],
+            [ 0.0, 1.0, 2.220446049250313e-16, 0.0 ],
+            [ 0.0, 0.0, 0.0, 1.0 ]
+          ],
+          "poseChild": [
+            [ 1.0, 0.0, 0.0, 0.0 ],
+            [ 0.0, 1.0, 0.0, 0.0 ],
+            [ 0.0, 0.0, 1.0, 0.0 ],
+            [ 0.0, 0.0, 0.0, 1.0 ]
+          ],
+          "limits": {
+            "positionLower": -0.0873,
+            "positionUpper": 3.8223,
+            "peakTorque": 12.0,
+            "velocity": 3.0,
+            "acceleration": Infinity
+          },
+          "gearRatio": 1.0,
+          "motorInertia": 0.0,
+          "frictionCoulomb": 0.0,
+          "frictionViscous": 0.003
+        },
+        {
+          "ID": "panda_joint7",
+          "parent": "panda_link6_0",
+          "child": "panda_link7_0",
+          "type": "revolute",
+          "passive": false,
+          "poseParent": [
+            [ 1.0, 0.0, 0.0, 0.088 ],
+            [ 0.0, 2.220446049250313e-16, -1.0, 0.0 ],
+            [ 0.0, 1.0, 2.220446049250313e-16, 0.0 ],
+            [ 0.0, 0.0, 0.0, 1.0 ]
+          ],
+          "poseChild": [
+            [ 1.0, 0.0, 0.0, 0.0 ],
+            [ 0.0, 1.0, 0.0, 0.0 ],
+            [ 0.0, 0.0, 1.0, 0.0 ],
+            [ 0.0, 0.0, 0.0, 1.0 ]
+          ],
+          "limits": {
+            "positionLower": -2.9671,
+            "positionUpper": 2.9671,
+            "peakTorque": 12.0,
+            "velocity": 3.0,
+            "acceleration": Infinity
+          },
+          "gearRatio": 1.0,
+          "motorInertia": 0.0,
+          "frictionCoulomb": 0.0,
+          "frictionViscous": 0.003
+        }
+      ]
+    }
+  ]
+}

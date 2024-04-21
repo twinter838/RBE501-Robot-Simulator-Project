@@ -1,5 +1,0 @@
-Robot=GenerateRobot()
-
-while(true)
-show(Robot,Robot.randomConfiguration,Visuals="on")
-end

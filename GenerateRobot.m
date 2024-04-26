@@ -18,7 +18,7 @@ end
 disp("Showing Robot")
 Robot=importrobot(urdf);
 if(useVectorFormat==true)
-Robot.DataFormat='Column'
+Robot.DataFormat='Column';
 end
 Robot.Gravity=gravity;
 end

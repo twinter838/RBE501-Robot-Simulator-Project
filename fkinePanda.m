@@ -9,7 +9,7 @@ function pose = fkinePanda (q, frame)
 
 
     p1 = [0 0 L1]';
-    p2 = [0 0 1]';
+    p2 = [0 0 L1]';
     p3 = [0 0 (L1+L2)]';
     p4 = [L3 0 (L1+L2)]';
     p5 = [0 0 (L1+L2+L4)]';

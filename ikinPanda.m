@@ -36,13 +36,14 @@ function ik = ikinPanda(targetPose)
         0 0 0 0  0 0 0];
 
 
-    v1 = wZ * p1;
-    v2 = wY*p2;
-    v3 = wZ*p3;
-    v4 = -wY*p4;
-    v5 = wZ*p5;
-    v6 = -wY*p6;
-    v7 = -wZ*p7;
+
+    v1 = -wZ * p1;
+    v2 = -wY*p2;
+    v3 = -wZ*p3;
+    v4 = wY*p4;
+    v5 = -wZ*p5;
+    v6 = wY*p6;
+    v7 = wZ*p7;
 
 
     S(:,1) = [z'; v1];

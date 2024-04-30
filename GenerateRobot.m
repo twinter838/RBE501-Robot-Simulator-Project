@@ -21,6 +21,8 @@ if(useVectorFormat==true)
 Robot.DataFormat='Column';
 end
 Robot.Gravity=gravity;
+Robot.Bodies{5}.Joint.PositionLimits=[-3.1416,0];
+Robot.Bodies{5}.Joint.HomePosition=0;
 %Robot.removeBody("panda_leftfinger")
 %Robot.removeBody("panda_rightfinger")
 end

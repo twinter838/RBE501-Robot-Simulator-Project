@@ -62,19 +62,19 @@ function pose = fkinePanda (q, frame)
 
     M = [ 1 0 0 L3;
           0 -1 0 0;
-          0 0 -1 (L1+L2+L4);
+          0 0 -1 (L1+L2+L4-L5);
           0 0 0 1];
 
     %end effector translation on z axis
 
-    Tee = [1 0 0 0;
-           0 1 0 0;
-           0 0 1 L5;
-           0 0 0 1];
+   % Tee = [1 0 0 0;
+   %        0 1 0 0;
+   %        0 0 1 L5;
+   %        0 0 0 1];
 
 
 
 
-    pose = fkine(S,M,q, frame) * Tee;
+    pose = fkine(S,M,q, frame);
 
 end 

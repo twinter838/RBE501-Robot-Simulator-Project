@@ -1,4 +1,4 @@
-function pose = fkinePanda (q, frame)
+function pose = fkinePanda (kinematicModel,q, frame)
     L1 = 0.333;
     L2 = 0.316;
     L3 = 0.088;
@@ -56,15 +56,8 @@ function pose = fkinePanda (q, frame)
     S(:,6) = [-y'; v6];
     S(:,7) = [-z'; v7];
     %S(:,8) = [-z'; -wZ*pF]
-
-
-
-
-    M = [ 1 0 0 L3;
-          0 -1 0 0;
-          0 0 -1 (L1+L2+L4-L5);
-          0 0 0 1];
-
+    M = kinematicModel.M
+    S=kinematicModel.S
     %end effector translation on z axis
 
    % Tee = [1 0 0 0;

@@ -1,6 +1,6 @@
 function Robot=GenerateRobot(urdf,useVectorFormat,gravity)
 arguments
-urdf="frankaEmikaPanda.urdf"
+urdf="panda.urdf"
 useVectorFormat=false;
 gravity=[0,0,0]
 end
@@ -16,7 +16,7 @@ end
 %
 
 disp("Showing Robot")
-Robot=importrobot(urdf,"urdf");
+Robot=importrobot(urdf)
 if(useVectorFormat==true)
 Robot.DataFormat='Column';
 end

@@ -37,7 +37,7 @@ function ik = ikinPanda(targetPose)
 
 
     v1 = wZ * p1;
-    v2 = -wY*p2;
+    v2 = wY*p2;
     v3 = wZ*p3;
     v4 = -wY*p4;
     v5 = wZ*p5;
@@ -46,7 +46,7 @@ function ik = ikinPanda(targetPose)
 
 
     S(:,1) = [z'; v1];
-    S(:,2) = [-y'; v2];
+    S(:,2) = [y'; v2];
     S(:,3) = [z'; v3];
     S(:,4) = [-y'; v4];
     S(:,5) = [z'; v5];

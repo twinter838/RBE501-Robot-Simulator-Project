@@ -68,7 +68,7 @@ function ik = ikinPanda(targetPose)
     % %start of ik stuffs
     % 
     currentQ = [pi/2 pi/2 pi/2 pi/2 pi/2 pi/2 pi/2]';
-    currentT = fkine(S, M, currentQ, "space"); 
+    currentT = fkinePanda(currentQ, "space"); 
     currentPose = MatrixLog6(currentT);
     currentPose = [currentPose(3,2) currentPose(1,3) currentPose(2,1) currentPose(1:3,4)']';
 
@@ -88,7 +88,7 @@ function ik = ikinPanda(targetPose)
         deltaQ = J\diff;
         currentQ = currentQ + deltaQ;
 
-        currentT = fkine(S, M, currentQ, "space");
+        currentT = fkinePanda(currentQ, "space");
         currentPose = MatrixLog6(currentT);
         currentPose = [currentPose(3,2) ...
                        currentPose(1,3) ...
@@ -106,7 +106,7 @@ function ik = ikinPanda(targetPose)
 
     distance;
     currentQ;
-    currentT = fkine(S, M, currentQ, "space");
+    currentT = fkinePanda(currentQ, "space");
     currentPose = MatrixLog6(currentT);
     currentPose = [currentPose(3,2) ...
                    currentPose(1,3) ...

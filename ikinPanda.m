@@ -1,12 +1,13 @@
 function ik = ikinPanda(targetPose,kinematicModel)
 S=kinematicModel.S;
 M=kinematicModel.M;
-    
+   
     % 
     % %start of ik stuffs
     % 
     currentQ = [pi/2 pi/2 pi/2 pi/2 pi/2 pi/2 pi/2]';
     currentT = fkine(S, M, currentQ, "space");
+
     currentPose = MatrixLog6(currentT);
     currentPose = [currentPose(3,2) currentPose(1,3) currentPose(2,1) currentPose(1:3,4)']';
 
@@ -27,6 +28,7 @@ M=kinematicModel.M;
         currentQ = currentQ + deltaQ;
 
     currentT = fkine(S, M, currentQ, "space");
+
         currentPose = MatrixLog6(currentT);
         currentPose = [currentPose(3,2) ...
                        currentPose(1,3) ...
@@ -44,7 +46,7 @@ M=kinematicModel.M;
 
     distance
     currentQ;
-    currentT = fkine(S, M, currentQ, "space");
+    currentT = fkinePanda(currentQ, "space");
     currentPose = MatrixLog6(currentT);
     currentPose = [currentPose(3,2) ...
                    currentPose(1,3) ...

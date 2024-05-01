@@ -50,81 +50,103 @@ end
 
 function createGUI(robot)
     % Create the main figure
-    fig = uifigure('Name', 'Franka Emika Panda - 7 DoF Robot', 'Position', [100, 100, 944, 754]);
+    fig = uifigure('Name', 'Franka Emika Panda - 7 DoF Robot', 'Position', [100, 100, 1000, 800]);
 
     % Define panel positions
-    panelLeftPos = [10, 50, 574, 674];
-    panelRightPos = [594, 50, 340, 674];
+    panelLeftPos = [10, 50, 580, 780];
+    panelRightPos = [610, 50, 380, 780];
 
     % Create panels
     robotPanel = uipanel(fig, 'Title', 'Robot - Franka Emika Panda', 'Position', panelLeftPos);
     controlPanel = uipanel(fig, 'Title', 'Control Panel', 'Position', panelRightPos);
 
     % Axes for robot visualization (main and sub-axes)
-    mainAxes = uiaxes(robotPanel, 'Position', [10, 270, 554, 384]);
-    subAxes1 = uiaxes(robotPanel, 'Position', [10, 140, 174, 120]);
-    subAxes2 = uiaxes(robotPanel, 'Position', [200, 140, 174, 120]);
-    subAxes3 = uiaxes(robotPanel, 'Position', [390, 140, 174, 120]);
+    mainAxes = uiaxes(robotPanel, 'Position', [10, 300, 550, 450]);
+    subAxes1 = uiaxes(robotPanel, 'Position', [10, 140, 550, 140]);
+    subAxes2 = uiaxes(robotPanel, 'Position', [10, 10, 550, 140]);
+    subAxes3 = uiaxes(controlPanel, 'Position', [10, 140, 330, 140]);
+    subAxes4 = uiaxes(controlPanel, 'Position', [10, 10, 330, 140]);
 
-    % Edit fields and sliders for X, Y, Z, and payload
-    % Constants for layout
-    baseX = 10; % Base x-coordinate for the first control
-    spacingX = 160; % Horizontal spacing between controls
+    % Create the X label and text input
+    xLabel = uilabel(controlPanel, 'Text', 'X', 'Position', [30, 720, 50, 25]);
+    xEdit = uieditfield(controlPanel, 'numeric', 'Position', [10, 700, 50, 25]);
     
-    % Constants for layout
-    baseX = 10; % Starting position for X controls
-    spacingX = 170; % Horizontal spacing between controls
-    controlWidth = 150; % Width for sliders and edit fields
-    labelWidth = 50;  % Width for labels
+    % Create the Y label and text input
+    yLabel = uilabel(controlPanel, 'Text', 'Y', 'Position', [90, 720, 50, 25]);
+    yEdit = uieditfield(controlPanel, 'numeric', 'Position', [70, 700, 50, 25]);
     
-    % Adjusted XYZ control positions
-    labelsXYZ = {'X', 'Y', 'Z'};
-    for i = 1:length(labelsXYZ)
-        % Label
-        uilabel(controlPanel, 'Text', labelsXYZ{i}, 'Position', [baseX + (i-1) * spacingX, 180, labelWidth, 22]);
-        % Numeric edit field
-        uieditfield(controlPanel, 'numeric', 'Position', [baseX + (i-1) * spacingX, 150, controlWidth, 22]);
-        % Slider
-        uislider(controlPanel, 'Position', [baseX + (i-1) * spacingX, 130, controlWidth, 3], 'Limits', [-10 10]);
-    end
-    
-    % Adjusted RPY control positions
-    labelsRPY = {'Pitch', 'Yaw'};
-    baseY = 100;  % Starting position for Y controls
-    spacingY = 50;  % Vertical spacing between controls
-    for i = 1:length(labelsRPY)
-        % Label
-        uilabel(controlPanel, 'Text', labelsRPY{i}, 'Position', [baseX, baseY - (i-1) * spacingY, labelWidth, 22]);
-        % Numeric edit field
-        uieditfield(controlPanel, 'numeric', 'Position', [baseX + labelWidth, baseY - (i-1) * spacingY, controlWidth, 22]);
-        % Slider
-        uislider(controlPanel, 'Position', [baseX, baseY - (i-1) * spacingY - 20, controlWidth + labelWidth, 3], 'Limits', [-180 180]);
-    end
-    
-    % Align FK, IK, and Home buttons
-    buttonWidth = 80;
-    buttonSpacing = 10;
-    % Define the button labels
-    buttons = {'FK', 'IK', 'Home'};
-    
-    % Loop to create each button
-    for i = 1:length(buttons)
-        uibutton(controlPanel, 'Text', buttons{i}, ...
-                 'Position', [baseX + (i-1) * (buttonWidth + buttonSpacing), 50, buttonWidth, 22]);
-    end
+    % Create the Z label and text input
+    zLabel = uilabel(controlPanel, 'Text', 'Z', 'Position', [150, 720, 50, 25]);
+    zEdit = uieditfield(controlPanel, 'numeric', 'Position', [130, 700, 50, 25]);
 
+    % Create the R label and text input
+    xLabel = uilabel(controlPanel, 'Text', 'Roll', 'Position', [200, 720, 50, 25]);
+    xEdit = uieditfield(controlPanel, 'numeric', 'Position', [190, 700, 50, 25]);
+    
+    % Create the P label and text input
+    yLabel = uilabel(controlPanel, 'Text', 'Pitch', 'Position', [260, 720, 50, 25]);
+    yEdit = uieditfield(controlPanel, 'numeric', 'Position', [250, 700, 50, 25]);
+    
+    % Create the Y label and text input
+    zLabel = uilabel(controlPanel, 'Text', 'Yaw', 'Position', [320, 720, 50, 25]);
+    zEdit = uieditfield(controlPanel, 'numeric', 'Position', [310, 700, 50, 25]);
+    
+    % Create the Payload label and text input
+    payloadLabel = uilabel(controlPanel, 'Text', 'Payload', 'Position', [12, 670, 50, 25]);
+    payloadEdit = uieditfield(controlPanel, 'numeric', 'Position', [10, 650, 50, 25]);
+
+    % FK and IK buttons
+    fkButton = uibutton(controlPanel, 'Text', 'FK', 'Position', [80, 650, 75, 25]);
+    ikButton = uibutton(controlPanel, 'Text', 'IK', 'Position', [180, 650, 75, 25]);
 
     % Home button
-    % homeButton = uibutton(controlPanel, 'Text', 'Home', 'Position', [230, 80, 100, 22]);
+    homeButton = uibutton(controlPanel, 'Text', 'Home', 'Position', [280, 650, 75, 25]);
 
-    % Optionally set callbacks for buttons
+    % Define properties for each slider
+    sliderProperties = {
+        {'Joint1', 'Joint2', 'Joint3', 'Joint4', 'Joint5', 'Joint6', 'Joint7'},  % Slider labels
+        [10, 10, 10, 10, 10, 10, 10],                % X positions for sliders
+        [630, 590, 550, 510, 470, 430, 390],          % Y positions for sliders
+        [260, 260, 260, 260, 260, 260, 260],          % Widths for sliders
+        [-180, 180]                              % Limits for sliders (assuming same for all for simplicity)
+    };
+
+    % Create sliders
+    for i = 1:length(sliderProperties{1})
+        sliderLabel = sliderProperties{1}{i};
+        xPosition = sliderProperties{2}(i);
+        yPosition = sliderProperties{3}(i);
+        width = sliderProperties{4}(i);
+        limits = sliderProperties{5};
+        
+        % Label for slider
+        uilabel(controlPanel, 'Text', sliderLabel, ...
+                'Position', [xPosition, yPosition - 20, 50, 22]);
+        
+        % Slider control
+        uislider(controlPanel, ...
+                 'Position', [xPosition + 60, yPosition, width, 3], ...
+                 'Limits', limits);
+
+    end
+
+    % Set callbacks for FK and IK buttons if needed
+    % fkButton.ButtonPushedFcn = @(btn,event) executeFK();
+    % ikButton.ButtonPushedFcn = @(btn,event) executeIK();
+
+    % Set callback for Home button if needed
+    homeButton.ButtonPushedFcn = @(btn,event) goHomePosition();
+
+    % Optionally you can set up more detailed aspects like toolbars, menus, etc.
 end
+
 
 
 
 function executeFK()
     disp('Executing Forward Kinematics');
     % Add FK computation code here
+
 end
 
 function executeIK()
@@ -132,9 +154,12 @@ function executeIK()
     % Add IK computation code here
 end
 
-function resetToHomePosition()
+function goHomePosition()
     disp('Resetting to Home Position');
     % Add code to reset the robot to its home configuration here
+    q=[0,0,0,0,0,0,0]'
+    EEpos=fkinePanda(kinematicModel,q,"space")
+
 end
 
 function animateRobot(src, event, robot, robotAxes)

@@ -1,4 +1,4 @@
-To run the code - run the ___ file
+To run the code - run the fepanda.m file
 
 We decided to simulate the Franka Emika Panda robot arm 
 which has 7 degrees of freedom. Here is a link to some schematics.

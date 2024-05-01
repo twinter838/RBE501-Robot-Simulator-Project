@@ -236,12 +236,24 @@ function executeIK(inputs)
     roll = inputs.roll;
     pitch = inputs.pitch;
     yaw = inputs.yaw;
-    % Store pose parameters as targetPose
-    targetPose = struct('x', x, 'y', y, 'z', z, 'roll', roll, 'pitch', pitch, 'yaw', yaw);
-    
-    % Assuming you have a function ikinePanda to compute inverse kinematics
-    % Call the function and pass the pose parameters to compute the joint angles
-    q = ikinPanda(targetPose, kinematicModel);
+
+    % Convert roll, pitch, yaw to rotation matrix
+    R = eul2rotm([yaw, pitch, roll]);
+
+    % Assemble transformation matrix
+    T = eye(4);
+    T(1:3, 1:3) = R;
+    T(1:3, 4) = [x; y; z];
+
+    % Convert transformation matrix to 6-dimensional vector
+    targetPoseVector = MatrixLog6(T);
+    targetPoseVector = [targetPoseVector(3,2) ...
+                        targetPoseVector(1,3) ...
+                        targetPoseVector(2,1) ...
+                        targetPoseVector(1:3,4)']';
+
+    % Call ikinPanda function with the targetPoseVector
+    q = ikinPanda(targetPoseVector, kinematicModel);
 
     % Display the computed joint angles
     disp('Inverse Kinematics Solution:');

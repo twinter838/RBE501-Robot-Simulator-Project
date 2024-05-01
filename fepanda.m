@@ -241,7 +241,7 @@ function gravitycomp()
     traj=make_trajectory("quintic",params)
     for i=1:11
 
-    show(Robot,traj.q(i,:)',Visuals="off",Collisions="off",FastUpdate=true,PreservePlot=false)
+    show(Robot,traj.q(i,:)',Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false)
 
     tau=gravityCompensation(Robot,q);
     drawnow
@@ -250,7 +250,7 @@ function gravitycomp()
 end
 
 function executeFK(inputs)
-    global Joints kinematicModel;
+    global Joints kinematicModel Robot;
     disp('Executing Forward Kinematics');
     
     % Display joint angles for debugging
@@ -273,6 +273,15 @@ function executeFK(inputs)
     qtest=ikinPanda(currentPose,kinematicModel)';
     
     tauList=moveAlongTraj(Robot,q,qOld);
+    while(true)
+
+    show(Robot,tauList,Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false)
+
+    % tau=gravityCompensation(Robot,q);
+    drawnow
+    pause(0.01)
+    waitforbuttonpress
+    end
 
 end
 
@@ -308,9 +317,11 @@ end
 
 
 function goHomePosition()
+    global Robot;
+    qOld= Robot.homeConfiguration;
     disp('Resetting to Home Position');
     % Add code to reset the robot to its home configuration here
-    q=[0,0,0,0,0,0,0]'
+    q=[0,0,0,0,0,0,0]';
     pose=fkinePanda(kinematicModel,q,"space");
     currentPose = MatrixLog6(pose);
     currentPose = [currentPose(3,2) ...

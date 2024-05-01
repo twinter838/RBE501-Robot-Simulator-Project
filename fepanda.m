@@ -1,22 +1,30 @@
 function createFrankaEmikaPandaSimulatorApp()
     % Add the library path if required
-    addpath('lib');
+    clc;
+    addpath('utils');
     addpath("Panda\meshes\collision\");
     addpath("Panda\meshes\visual\");
     addpath("Panda\tests\");
 
-    % global robot kinematicModel;
+    global Robot kinematicModel;
+    global xEdit yEdit zEdit rEdit pEdit yaEdit payloadEdit;
+    global  mainAxes posAxes velAxes accAxes torAxes;
+    global Joints;
+    global fkButton ikButton homeButton ResetButton GcompButton;
 
   
     % Create and plot the robot using the GenerateRobot function
     Robot=GenerateRobot("panda.urdf",true,[0,0,-9.81]);
     createGUI(Robot);
-    %Robot=loadrobot("frankaEmikaPanda","DataFormat","column")
+
+    % show(Robot, 'PreservePlot', false, 'Parent', mainAxes);
+    % show(Robot,Robot.homeConfiguration,Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false);
+    Robot=loadrobot("frankaEmikaPanda","DataFormat","column")
     %Generates a new random config of the robot every time a button is pressed
     % while(true)
     % showdetails(Robot)
-    q=Robot.randomConfiguration
-    %q=[0,pi/2,0,0,0,0,0]'
+    % q=Robot.randomConfiguration
+    % q=[0,pi/2,0,0,0,0,0]'
     % show(Robot,q,Visuals="off",Collisions="off",FastUpdate=true,PreservePlot=false)
 
     kinematicModel=generateKinematicModel(Robot);
@@ -36,19 +44,21 @@ function createFrankaEmikaPandaSimulatorApp()
     % % show(robot, 'PreservePlot', false, 'Parent', robotAxes);
     % currentQ = zeros(1,7);  % Franka has 7 DOFs
 
-  
-    
-    % % Create text boxes for each parameter
-    % textBoxPositions = [0, 40;100, 40; 200, 40; 300, 40; 400, 40; 500, 40]; % Adjust positions as needed
-    % for i = 1:numLabels
-    %     uicontrol('Parent', controlPanel, 'Style', 'edit', 'String', '0', ...
-    %               'Position', [textBoxPositions(i, 1), textBoxPositions(i, 2), 100, 25], ...
-    %               'Callback', @(src, event) externalPathCallback(src, event, i));
-    % end
 
 end
 
-function createGUI(robot)
+function createGUI(Robot)
+   % Declare global variables for GUI components
+    global xEdit yEdit zEdit rEdit pEdit yaEdit payloadEdit;
+    global mainAxes posAxes velAxes accAxes torAxes;
+    global fkButton ikButton homeButton ResetButton GcompButton;
+    global slider1 slider2 slider3 slider4 slider5 slider6 slider7;
+    global valueDisplay1 valueDisplay2 valueDisplay3 valueDisplay4 valueDisplay5 valueDisplay6 valueDisplay7;
+    global Joints;
+
+    % Initialize array to store slider values
+    Joints = zeros(1, 7);
+
     % Create the main figure
     fig = uifigure('Name', 'Franka Emika Panda - 7 DoF Robot', 'Position', [100, 100, 1000, 800]);
 
@@ -62,10 +72,15 @@ function createGUI(robot)
 
     % Axes for robot visualization (main and sub-axes)
     mainAxes = uiaxes(robotPanel, 'Position', [10, 300, 550, 450]);
-    subAxes1 = uiaxes(robotPanel, 'Position', [10, 140, 550, 140]);
-    subAxes2 = uiaxes(robotPanel, 'Position', [10, 10, 550, 140]);
-    subAxes3 = uiaxes(controlPanel, 'Position', [10, 140, 330, 140]);
-    subAxes4 = uiaxes(controlPanel, 'Position', [10, 10, 330, 140]);
+    % robotAxes = axes('Parent', robotPanel, 'Position', [0.05, 0.1, 0.9, 0.85]);
+    posAxes = uiaxes(robotPanel, 'Position', [10, 140, 550, 140]);
+    velAxes = uiaxes(robotPanel, 'Position', [10, 10, 550, 140]);
+    accAxes = uiaxes(controlPanel, 'Position', [10, 140, 330, 140]);
+    torAxes = uiaxes(controlPanel, 'Position', [10, 10, 330, 140]);
+
+    % Plot the robot in the mainAxes
+    % show(Robot, 'PreservePlot', false, 'Parent', mainAxes);
+   
 
     % Create the X label and text input
     xLabel = uilabel(controlPanel, 'Text', 'X', 'Position', [30, 720, 50, 25]);
@@ -80,16 +95,16 @@ function createGUI(robot)
     zEdit = uieditfield(controlPanel, 'numeric', 'Position', [130, 700, 50, 25]);
 
     % Create the R label and text input
-    xLabel = uilabel(controlPanel, 'Text', 'Roll', 'Position', [200, 720, 50, 25]);
-    xEdit = uieditfield(controlPanel, 'numeric', 'Position', [190, 700, 50, 25]);
+    rLabel = uilabel(controlPanel, 'Text', 'Roll', 'Position', [200, 720, 50, 25]);
+    rEdit = uieditfield(controlPanel, 'numeric', 'Position', [190, 700, 50, 25]);
     
     % Create the P label and text input
-    yLabel = uilabel(controlPanel, 'Text', 'Pitch', 'Position', [260, 720, 50, 25]);
-    yEdit = uieditfield(controlPanel, 'numeric', 'Position', [250, 700, 50, 25]);
+    pLabel = uilabel(controlPanel, 'Text', 'Pitch', 'Position', [260, 720, 50, 25]);
+    pEdit = uieditfield(controlPanel, 'numeric', 'Position', [250, 700, 50, 25]);
     
     % Create the Y label and text input
-    zLabel = uilabel(controlPanel, 'Text', 'Yaw', 'Position', [320, 720, 50, 25]);
-    zEdit = uieditfield(controlPanel, 'numeric', 'Position', [310, 700, 50, 25]);
+    yaLabel = uilabel(controlPanel, 'Text', 'Yaw', 'Position', [320, 720, 50, 25]);
+    yaEdit = uieditfield(controlPanel, 'numeric', 'Position', [310, 700, 50, 25]);
     
     % Create the Payload label and text input
     payloadLabel = uilabel(controlPanel, 'Text', 'Payload', 'Position', [12, 670, 50, 25]);
@@ -102,37 +117,69 @@ function createGUI(robot)
     % Home button
     homeButton = uibutton(controlPanel, 'Text', 'Home', 'Position', [280, 650, 75, 25]);
 
-    % Define properties for each slider
-    sliderProperties = {
-        {'Joint1', 'Joint2', 'Joint3', 'Joint4', 'Joint5', 'Joint6', 'Joint7'},  % Slider labels
-        [10, 10, 10, 10, 10, 10, 10],                % X positions for sliders
-        [630, 590, 550, 510, 470, 430, 390],          % Y positions for sliders
-        [260, 260, 260, 260, 260, 260, 260],          % Widths for sliders
-        [-180, 180]                              % Limits for sliders (assuming same for all for simplicity)
-    };
+    % Reset button
+    ResetButton = uibutton(controlPanel, 'Text', 'Reset', 'Position', [250, 300, 75, 30]);
 
-    % Create sliders
-    for i = 1:length(sliderProperties{1})
-        sliderLabel = sliderProperties{1}{i};
-        xPosition = sliderProperties{2}(i);
-        yPosition = sliderProperties{3}(i);
-        width = sliderProperties{4}(i);
-        limits = sliderProperties{5};
-        
-        % Label for slider
-        uilabel(controlPanel, 'Text', sliderLabel, ...
-                'Position', [xPosition, yPosition - 20, 50, 22]);
-        
-        % Slider control
-        uislider(controlPanel, ...
-                 'Position', [xPosition + 60, yPosition, width, 3], ...
-                 'Limits', limits);
+    % Gravity Comp
+    GcompButton = uibutton(controlPanel, 'Text', 'Gravity Compensation', 'Position', [30, 300, 150, 30]);
 
+
+
+
+    
+    % Inside the function or script
+    % Slider 1
+    uilabel(controlPanel, 'Text', 'Joint1', 'Position', [10, 630 - 20, 50, 22]);
+    slider1 = uislider(controlPanel, 'Position', [10 + 60, 630, 240, 3], 'Limits', [-180, 180]);
+    valueDisplay1 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 630 - 20, 40, 22], 'Value', slider1.Value, 'Editable', 'off');
+    slider1.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay1, 1, Joints);
+    
+    % Slider 2
+    uilabel(controlPanel, 'Text', 'Joint2', 'Position', [10, 590 - 20, 50, 22]);
+    slider2 = uislider(controlPanel, 'Position', [10 + 60, 590, 240, 3], 'Limits', [-180, 180]);
+    valueDisplay2 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 590 - 20, 40, 22], 'Value', slider2.Value, 'Editable', 'off');
+    slider2.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay2, 2, Joints);
+    
+    % Slider 3
+    uilabel(controlPanel, 'Text', 'Joint3', 'Position', [10, 550 - 20, 50, 22]);
+    slider3 = uislider(controlPanel, 'Position', [10 + 60, 550, 240, 3], 'Limits', [-180, 180]);
+    valueDisplay3 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 550 - 20, 40, 22], 'Value', slider3.Value, 'Editable', 'off');
+    slider3.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay3, 3, Joints);
+    
+    % Slider 4
+    uilabel(controlPanel, 'Text', 'Joint4', 'Position', [10, 510 - 20, 50, 22]);
+    slider4 = uislider(controlPanel, 'Position', [10 + 60, 510, 240, 3], 'Limits', [-180, 180]);
+    valueDisplay4 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 510 - 20, 40, 22], 'Value', slider4.Value, 'Editable', 'off');
+    slider4.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay4, 4, Joints);
+    
+    % Slider 5
+    uilabel(controlPanel, 'Text', 'Joint5', 'Position', [10, 470 - 20, 50, 22]);
+    slider5 = uislider(controlPanel, 'Position', [10 + 60, 470, 240, 3], 'Limits', [-180, 180]);
+    valueDisplay5 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 470 - 20, 40, 22], 'Value', slider5.Value, 'Editable', 'off');
+    slider5.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay5, 5, Joints);
+    
+    % Slider 6
+    uilabel(controlPanel, 'Text', 'Joint6', 'Position', [10, 430 - 20, 50, 22]);
+    slider6 = uislider(controlPanel, 'Position', [10 + 60, 430, 240, 3], 'Limits', [-180, 180]);
+    valueDisplay6 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 430 - 20, 40, 22], 'Value', slider6.Value, 'Editable', 'off');
+    slider6.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay6, 6, Joints);
+    
+    % Slider 7
+    uilabel(controlPanel, 'Text', 'Joint7', 'Position', [10, 390 - 20, 50, 22]);
+    slider7 = uislider(controlPanel, 'Position', [10 + 60, 390, 240, 3], 'Limits', [-180, 180]);
+    valueDisplay7 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 390 - 20, 40, 22], 'Value', slider7.Value, 'Editable', 'off');
+    slider7.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay7, 7, Joints);
+    
+    % Function to update slider value display and store in array
+    function updateSliderValueDisplay(slider, event, valueDisplay, jointNumber, Joints)
+        valueDisplay.Value = event.Value;
+        Joints(jointNumber) = slider.Value;
     end
-
     % Set callbacks for FK and IK buttons if needed
-    % fkButton.ButtonPushedFcn = @(btn,event) executeFK();
-    % ikButton.ButtonPushedFcn = @(btn,event) executeIK();
+    fkButton.ButtonPushedFcn = @(btn, event) executeFK(getCurrentInputs());
+    ikButton.ButtonPushedFcn = @(btn, event) executeIK(getCurrentInputs());
+    % Reset values of input counters
+    ResetButton.ButtonPushedFcn = @(btn,event) executeIK();
 
     % Set callback for Home button if needed
     homeButton.ButtonPushedFcn = @(btn,event) goHomePosition();
@@ -141,17 +188,65 @@ function createGUI(robot)
 end
 
 
+% Function to gather current inputs from UI components
+function inputs = getCurrentInputs()
+    global xEdit yEdit zEdit rEdit pEdit yaEdit payloadEdit;
 
-
-function executeFK()
-    disp('Executing Forward Kinematics');
-    % Add FK computation code here
-
+    % Assuming xEdit, yEdit, zEdit, rEdit, pEdit, yaEdit, and payloadEdit are
+    % defined in the same script or passed as arguments or available as global.
+    inputs = struct( ...
+        'x', xEdit.Value, ...
+        'y', yEdit.Value, ...
+        'z', zEdit.Value, ...
+        'roll', rEdit.Value, ...
+        'pitch', pEdit.Value, ...
+        'yaw', yaEdit.Value, ...
+        'payload', payloadEdit.Value ...
+    );
 end
 
-function executeIK()
+
+function executeFK(inputs)
+    global Joints kinematicModel;
+    disp('Executing Forward Kinematics');
+    
+    % Display joint angles for debugging
+    disp('Joint angles (q):');
+    disp(Joints);
+
+    % Assuming you have a function fkinePanda to compute forward kinematics
+    % Call the function and pass the joint angles to compute the pose
+    pose = fkinePanda(kinematicModel, Joints, "space");
+
+    % Optionally display the results from the fkine function
+    disp('FK Results:');
+    disp(pose);
+end
+
+
+
+function executeIK(inputs)
+    global kinematicModel;
     disp('Executing Inverse Kinematics');
-    % Add IK computation code here
+    
+    % Extract pose information from the inputs structure
+    x = inputs.x;
+    y = inputs.y;
+    z = inputs.z;
+    roll = inputs.roll;
+    pitch = inputs.pitch;
+    yaw = inputs.yaw;
+    % Store pose parameters as targetPose
+    targetPose = struct('x', x, 'y', y, 'z', z, 'roll', roll, 'pitch', pitch, 'yaw', yaw);
+    
+    % Assuming you have a function ikinePanda to compute inverse kinematics
+    % Call the function and pass the pose parameters to compute the joint angles
+    q = ikinPanda(targetPose, kinematicModel);
+
+    % Display the computed joint angles
+    disp('Inverse Kinematics Solution:');
+    disp('Joint angles (q):');
+    disp(q);
 end
 
 function goHomePosition()
@@ -180,7 +275,7 @@ function FKButtonPushed(app, event, robot, robotAxes)
         jointAngles(i) = str2double(app.findobj('Tag', ['Joint' num2str(i)]).Text); % Assuming joint text boxes are tagged 'Joint1', 'Joint2', etc.
     end
     % Calculate end-effector pose using FK
-    eePose = fkinePanda (kinematicModel,jointAngles, frame);
+    eePose = fkinePanda (kinematicModel,jointAngles, "space");
     % Update GUI or display results as needed
     disp('End-Effector Position:');
     disp(eePose(1:3)); % Display position part
@@ -202,3 +297,63 @@ function IKButtonPushed(app, event, robot, robotAxes)
     disp(jointConfig); % Display joint configuration
 end
 
+
+function plot_function(tau_acc,jointPos_acc,jointVel_acc,jointAcl_acc, t_acc)
+
+    global robotPanel;
+    % Plotting the joint positions on the  axesPositions
+    posAxes = axes('Parent', robotPanel, 'Position', [0.1, 0.75, 0.8, 0.2]);
+    velAxes = axes('Parent', robotPanel, 'Position', [0.1, 0.5, 0.8, 0.2]);
+    accAxes = axes('Parent', robotPanel, 'Position', [0.1, 0.25, 0.8, 0.2]);
+    torAxes = axes('Parent', robotPanel, 'Position', [0.1, 0.05, 0.8, 0.2]);
+
+    % cla(robotAxes);
+    plot(axesPositions, t_acc, jointPos_acc(1,:), 'LineWidth', 2);
+    hold(axesPositions, 'on');
+    for j = 2:size(jointPos_acc, 1)
+        plot(axesPositions, t_acc, jointPos_acc(j,:), 'LineWidth', 2);
+    end
+    hold( axesPositions, 'off');
+    title( axesPositions, 'Joint Positions');
+    legend( axesPositions, {'Joint 1', 'Joint 2', 'Joint 3', 'Joint 4', 'Joint 5', 'Joint 6'});
+    xlabel( axesPositions, 'Time [s]'), ylabel( axesPositions, 'Joint Position');
+    set( axesPositions, 'FontSize', 14);
+
+    % Plotting the joint velocities on the  axesVelocities
+    plot(axesVelocities, t_acc, jointVel_acc(1,:), 'LineWidth', 2);
+    hold(axesVelocities, 'on');
+    for j = 2:size(jointVel_acc, 1)
+        plot(axesVelocities, t_acc, jointVel_acc(j,:), 'LineWidth', 2);
+    end
+    hold( axesVelocities, 'off');
+    title( axesVelocities, 'Joint Velocities');
+    legend( axesVelocities, {'Joint 1', 'Joint 2', 'Joint 3', 'Joint 4', 'Joint 5', 'Joint 6'});
+    xlabel(axesVelocities, 'Time [s]'), ylabel( axesVelocities, 'Joint Velocities ');
+    set(axesVelocities, 'FontSize', 14);
+
+
+    % Plotting the joint accelerations on the  axesAccelerations
+    plot(axesAccelerations, t_acc, jointAcl_acc(1,:), 'LineWidth', 2);
+    hold(axesAccelerations, 'on');
+    for j = 2:size(jointAcl_acc, 1)
+        plot(axesAccelerations, t_acc, jointAcl_acc(j,:), 'LineWidth', 2);
+    end
+    hold(axesAccelerations, 'off');
+    title(axesAccelerations, 'Joint Accelerations');
+    legend(axesAccelerations, {'Joint 1', 'Joint 2', 'Joint 3', 'Joint 4', 'Joint 5', 'Joint 6'});
+    xlabel( axesAccelerations, 'Time [s]'), ylabel(axesAccelerations, 'Joint Accelerations');
+    set(axesAccelerations, 'FontSize', 14);
+
+    % Plotting the torque profiles on the axesTorques
+    plot(axesTorques, t_acc, tau_acc(1,:), 'LineWidth', 2);
+    hold(axesTorques, 'on');
+    for j = 2:size(tau_acc, 1)
+        plot(axesTorques, t_acc, tau_acc(j,:), 'LineWidth', 2);
+    end
+    hold(axesTorques, 'off');
+    title(axesTorques, 'Joint Torques');
+    legend(axesTorques, {'Joint 1', 'Joint 2', 'Joint 3', 'Joint 4', 'Joint 5', 'Joint 6'});
+    xlabel(axesTorques, 'Time [s]'), ylabel(axesTorques, 'Torque [Nm]');
+    set(axesTorques, 'FontSize', 14);
+
+end

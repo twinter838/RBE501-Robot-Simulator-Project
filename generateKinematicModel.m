@@ -13,7 +13,7 @@ currentS=[currentV;screw(currentV,currentP)];
 S=[S,currentS];
 string(Robot.BodyNames(i))
 end
-S=round(S,10)
+S=round(S,10);
 kinematicModel.S=S;
 
 %MList Generation

@@ -18,8 +18,8 @@ function [tau,V,Vdot] = rne(params)
 %
 % Forward iterations
     n = width(params.S);
-    S=params.S
-    G=params.G
+    S=params.S;
+    G=params.G;
     q = params.jointPos;
     qd = params.jointVel;
     qdd = params.jointAcc;

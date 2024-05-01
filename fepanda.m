@@ -238,7 +238,7 @@ function executeIK(inputs)
     yaw = inputs.yaw;
 
     % Convert roll, pitch, yaw to rotation matrix
-    R = eul2rotm([yaw, pitch, roll]);
+    R = eul2rotm([roll, pitch, yaw]);
 
     % Assemble transformation matrix
     T = eye(4);
@@ -246,20 +246,13 @@ function executeIK(inputs)
     T(1:3, 4) = [x; y; z];
 
     % Convert transformation matrix to 6-dimensional vector
-    targetPoseVector = MatrixLog6(T);
-    targetPoseVector = [targetPoseVector(3,2) ...
-                        targetPoseVector(1,3) ...
-                        targetPoseVector(2,1) ...
-                        targetPoseVector(1:3,4)']';
+    targetPose = MatrixLog6(T);
+    targetPoseVector = [targetPose(3,2); targetPose(1,3); targetPose(2,1); targetPose(1:3,4)];
 
     % Call ikinPanda function with the targetPoseVector
     q = ikinPanda(targetPoseVector, kinematicModel);
-
-    % Display the computed joint angles
-    disp('Inverse Kinematics Solution:');
-    disp('Joint angles (q):');
-    disp(q);
 end
+
 
 function goHomePosition()
     disp('Resetting to Home Position');
@@ -276,37 +269,6 @@ function animateRobot(src, event, robot, robotAxes)
     % Here you would typically update the robot's joint states and re-display it
     currentQ = currentQ + 0.1; % Increment joint angles slightly for demonstration
     show(robot, 'Configuration', currentQ, 'PreservePlot', false, 'Parent', robotAxes);
-end
-
-function FKButtonPushed(app, event, robot, robotAxes)
-    global robot, kinematicModel
-    % Callback for FK button
-    % Retrieve joint values from the GUI
-    jointAngles = zeros(1,7);
-    for i = 1:7
-        jointAngles(i) = str2double(app.findobj('Tag', ['Joint' num2str(i)]).Text); % Assuming joint text boxes are tagged 'Joint1', 'Joint2', etc.
-    end
-    % Calculate end-effector pose using FK
-    eePose = fkinePanda (kinematicModel,jointAngles, "space");
-    % Update GUI or display results as needed
-    disp('End-Effector Position:');
-    disp(eePose(1:3)); % Display position part
-end
-
-function IKButtonPushed(app, event, robot, robotAxes)
-    global robot, kinematicModel;
-    % Callback for IK button
-    % Retrieve target pose from GUI
-    targetPose = zeros(1,7); % Assuming position (x, y, z) and quaternion (w, x, y, z)
-    for i = 1:7
-        targetPose(i) = str2double(app.findobj('Tag', ['Pose' num2str(i)]).Text); % Assuming pose text boxes are tagged 'Pose1', 'Pose2', etc.
-    end
-    % Calculate joint configuration using IK
-    jointConfig = ikinPanda(targetPose,kinematicModel);
-    % Apply the calculated joint configuration to the robot model
-    show(robot, 'Configuration', jointConfig, 'PreservePlot', false, 'Parent', robotAxes);
-    disp('Calculated Joint Configuration:');
-    disp(jointConfig); % Display joint configuration
 end
 
 

@@ -15,11 +15,14 @@ function createFrankaEmikaPandaSimulatorApp()
   
     % Create and plot the robot using the GenerateRobot function
     Robot=GenerateRobot("panda.urdf",true,[0,0,-9.81]);
-    createGUI(Robot);
+    createGUI();
+    kinematicModel=generateKinematicModel(Robot);
+
 
     % show(Robot, 'PreservePlot', false, 'Parent', mainAxes);
     % show(Robot,Robot.homeConfiguration,Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false);
-    Robot=loadrobot("frankaEmikaPanda","DataFormat","column")
+    % drawnow
+    % Robot=loadrobot("frankaEmikaPanda","DataFormat","column")
     %Generates a new random config of the robot every time a button is pressed
     % while(true)
     % showdetails(Robot)
@@ -27,8 +30,14 @@ function createFrankaEmikaPandaSimulatorApp()
     % q=[0,pi/2,0,0,0,0,0]'
     % show(Robot,q,Visuals="off",Collisions="off",FastUpdate=true,PreservePlot=false)
 
-    kinematicModel=generateKinematicModel(Robot);
     
+    show(Robot,Robot.homeConfiguration,Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false);
+    qOld=Robot.homeConfiguration;
+    drawnow
+    while(true)
+        showdetails(Robot)
+        waitforbuttonpress
+    end
     
     % EEpos=fkinePanda(kinematicModel,q,"space")
     % qTrue=getTransform(Robot,q,"panda_link8")
@@ -47,14 +56,14 @@ function createFrankaEmikaPandaSimulatorApp()
 
 end
 
-function createGUI(Robot)
+function createGUI()
    % Declare global variables for GUI components
     global xEdit yEdit zEdit rEdit pEdit yaEdit payloadEdit;
     global mainAxes posAxes velAxes accAxes torAxes;
     global fkButton ikButton homeButton ResetButton GcompButton;
     global slider1 slider2 slider3 slider4 slider5 slider6 slider7;
     global valueDisplay1 valueDisplay2 valueDisplay3 valueDisplay4 valueDisplay5 valueDisplay6 valueDisplay7;
-    global Joints;
+    global Joints Robot;
 
     % Initialize array to store slider values
     Joints = zeros(1, 7);
@@ -69,17 +78,30 @@ function createGUI(Robot)
     % Create panels
     robotPanel = uipanel(fig, 'Title', 'Robot - Franka Emika Panda', 'Position', panelLeftPos);
     controlPanel = uipanel(fig, 'Title', 'Control Panel', 'Position', panelRightPos);
+    % Step 1: Create a uix container
+    % % fig = figure;
+    % mainLayout = uix.VBox('Parent', fig);
+    % 
+    % % Step 2: Generate your robotics toolbox plot
+    % % Assuming 'Robot' is an object of your robotics toolbox
+    % plotAxes = axes('Parent', mainLayout);
+    % Robot.plot(Robot.homeConfiguration, 'Parent', plotAxes);
+    % 
+    % % Step 3: Adjust layout properties
+    % set(mainLayout, 'Heights', [-1]);
+    % 
+    % % Optionally, you might want to add a button to trigger the plot
+    % % button = uicontrol('Parent', mainLayout, 'Style', 'pushbutton', 'String', 'Plot', 'Callback', @(src,event) updatePlot());
+    % 
+    % % Optional: Ensure the UI updates to display the new plot immediately
+    % drawnow
 
     % Axes for robot visualization (main and sub-axes)
-    mainAxes = uiaxes(robotPanel, 'Position', [10, 300, 550, 450]);
-    % robotAxes = axes('Parent', robotPanel, 'Position', [0.05, 0.1, 0.9, 0.85]);
+    mainAxes = axes('Parent',robotPanel, 'Position', [10, 300, 550, 450]);
     posAxes = uiaxes(robotPanel, 'Position', [10, 140, 550, 140]);
     velAxes = uiaxes(robotPanel, 'Position', [10, 10, 550, 140]);
     accAxes = uiaxes(controlPanel, 'Position', [10, 140, 330, 140]);
     torAxes = uiaxes(controlPanel, 'Position', [10, 10, 330, 140]);
-
-    % Plot the robot in the mainAxes
-    % show(Robot, 'PreservePlot', false, 'Parent', mainAxes);
    
 
     % Create the X label and text input
@@ -122,10 +144,6 @@ function createGUI(Robot)
 
     % Gravity Comp
     GcompButton = uibutton(controlPanel, 'Text', 'Gravity Compensation', 'Position', [30, 300, 150, 30]);
-
-
-
-
     
     % Inside the function or script
     % Slider 1
@@ -175,12 +193,13 @@ function createGUI(Robot)
         valueDisplay.Value = event.Value;
         Joints(jointNumber) = slider.Value;
     end
+
     % Set callbacks for FK and IK buttons if needed
     fkButton.ButtonPushedFcn = @(btn, event) executeFK(getCurrentInputs());
     ikButton.ButtonPushedFcn = @(btn, event) executeIK(getCurrentInputs());
     % Reset values of input counters
     ResetButton.ButtonPushedFcn = @(btn,event) executeIK();
-
+    GcompButton.ButtonPushedFcn = @(btn,event) gravitycomp();
     % Set callback for Home button if needed
     homeButton.ButtonPushedFcn = @(btn,event) goHomePosition();
 
@@ -205,6 +224,30 @@ function inputs = getCurrentInputs()
     );
 end
 
+function gravitycomp()
+ global Joints kinematicModel Robot;
+    qOld=Robot.homeConfiguration;
+    q=Robot.randomConfiguration
+    params.q0=qOld;
+    params.q1=q;
+    params.v0=[0,0,0,0,0,0,0]';
+    params.v1=[0,0,0,0,0,0,0]';
+    params.t0=0;
+    params.t1=0.1;
+    params.dt=0.01;
+    params.a0=[0,0,0,0,0,0,0]';
+    params.a1=[0,0,0,0,0,0,0]';
+
+    traj=make_trajectory("quintic",params)
+    for i=1:11
+
+    show(Robot,traj.q(i,:)',Visuals="off",Collisions="off",FastUpdate=true,PreservePlot=false)
+
+    tau=gravityCompensation(Robot,q);
+    drawnow
+    pause(0.01)
+    end
+end
 
 function executeFK(inputs)
     global Joints kinematicModel;
@@ -221,6 +264,16 @@ function executeFK(inputs)
     % Optionally display the results from the fkine function
     disp('FK Results:');
     disp(pose);
+    qOld=Robot.homeConfiguration;
+    currentPose = MatrixLog6(pose);
+    currentPose = [currentPose(3,2) ...
+                   currentPose(1,3) ...
+                   currentPose(2,1) ...
+                   currentPose(1:3,4)']';
+    qtest=ikinPanda(currentPose,kinematicModel)';
+    
+    tauList=moveAlongTraj(Robot,q,qOld);
+
 end
 
 
@@ -258,7 +311,16 @@ function goHomePosition()
     disp('Resetting to Home Position');
     % Add code to reset the robot to its home configuration here
     q=[0,0,0,0,0,0,0]'
-    EEpos=fkinePanda(kinematicModel,q,"space")
+    pose=fkinePanda(kinematicModel,q,"space");
+    currentPose = MatrixLog6(pose);
+    currentPose = [currentPose(3,2) ...
+                   currentPose(1,3) ...
+                   currentPose(2,1) ...
+                   currentPose(1:3,4)']';
+    qtest=ikinPanda(currentPose,kinematicModel)';
+    
+    tauList=moveAlongTraj(Robot,q,qOld);
+
 
 end
 
@@ -270,7 +332,6 @@ function animateRobot(src, event, robot, robotAxes)
     currentQ = currentQ + 0.1; % Increment joint angles slightly for demonstration
     show(robot, 'Configuration', currentQ, 'PreservePlot', false, 'Parent', robotAxes);
 end
-
 
 function plot_function(tau_acc,jointPos_acc,jointVel_acc,jointAcl_acc, t_acc)
 

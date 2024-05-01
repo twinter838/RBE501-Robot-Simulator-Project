@@ -36,7 +36,7 @@ M=kinematicModel.M;
                        currentPose(1:3,4)']';
 
         i = i + 1;
-        distance = norm(targetPose - currentPose);
+        distance = norm(targetPose - currentPose)
 
  end 
 
@@ -46,7 +46,7 @@ M=kinematicModel.M;
 
     distance
     currentQ;
-    currentT = fkinePanda(currentQ, "space");
+    currentT = fkinePanda(kinematicModel,currentQ, "space");
     currentPose = MatrixLog6(currentT);
     currentPose = [currentPose(3,2) ...
                    currentPose(1,3) ...

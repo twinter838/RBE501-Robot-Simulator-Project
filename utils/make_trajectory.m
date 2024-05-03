@@ -1,12 +1,12 @@
 function traj = make_trajectory(type, params)
 
-    q0 = params.q0;
-    qf = params.q1;
-    v0 = params.v0;
-    vf = params.v1;
-    t0 = params.t0;
-    tf = params.t1;
-    dt = params.dt;
+    q0 = params.q0
+    qf = params.q1
+    v0 = params.v0
+    vf = params.v1
+    t0 = params.t0
+    tf = params.t1
+    dt = params.dt
 
     if strcmp(type, 'cubic')
         A = [0      0       t0^3    t0^2    t0      1;
@@ -27,8 +27,8 @@ function traj = make_trajectory(type, params)
              5*tf^4  4*tf^3  3*tf^2  2*tf   1       0;
              20*tf^3 12*tf^2 6*tf    2      0       0;];
 
-        a0 = params.a0;
-        af = params.a1;
+        a0 = params.a0
+        af = params.a1
 
     B = [q0 v0 a0 qf vf af]';
     X = pinv(A) * B;

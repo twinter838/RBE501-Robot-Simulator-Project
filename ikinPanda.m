@@ -13,11 +13,11 @@ M=kinematicModel.M;
 
 
     distance = norm(targetPose - currentPose);
-    lambda=3
+    lambda=1.2;
 
     %_______________________
     i = 0;
- while distance > .001 
+ while distance > .01
         currentQ;
         J = jacob0(S, currentQ);
         deltaQ=J'*pinv(J*J'+lambda^2*eye(6))*(targetPose - currentPose);
@@ -44,7 +44,7 @@ M=kinematicModel.M;
 
     %___________
 
-    distance
+    % distance
     currentQ;
     currentT = fkinePanda(kinematicModel,currentQ, "space");
     currentPose = MatrixLog6(currentT);

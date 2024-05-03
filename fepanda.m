@@ -2,6 +2,7 @@ function createFrankaEmikaPandaSimulatorApp()
     % Add the library path if required
     clc;
     addpath('utils');
+    addpath('Panda\');
     addpath("Panda\meshes\collision\");
     addpath("Panda\meshes\visual\");
     addpath("Panda\tests\");
@@ -30,14 +31,10 @@ function createFrankaEmikaPandaSimulatorApp()
     % q=[0,pi/2,0,0,0,0,0]'
     % show(Robot,q,Visuals="off",Collisions="off",FastUpdate=true,PreservePlot=false)
 
-    
-    show(Robot,Robot.homeConfiguration,Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false);
-    qOld=Robot.homeConfiguration;
-    drawnow
-    while(true)
-        showdetails(Robot)
-        waitforbuttonpress
-    end
+    % while(true)
+    %     showdetails(Robot)
+    %     waitforbuttonpress
+    % end
     
     % EEpos=fkinePanda(kinematicModel,q,"space")
     % qTrue=getTransform(Robot,q,"panda_link8")
@@ -69,11 +66,11 @@ function createGUI()
     Joints = zeros(1, 7);
 
     % Create the main figure
-    fig = uifigure('Name', 'Franka Emika Panda - 7 DoF Robot', 'Position', [100, 100, 1000, 800]);
+    fig = uifigure('Name', 'Franka Emika Panda - 7 DoF Robot', 'Position', [100, 100, 1000, 600]);
 
     % Define panel positions
-    panelLeftPos = [10, 50, 580, 780];
-    panelRightPos = [610, 50, 380, 780];
+    panelLeftPos = [10, 50, 580, 580];
+    panelRightPos = [610, 50, 380, 580];
 
     % Create panels
     robotPanel = uipanel(fig, 'Title', 'Robot - Franka Emika Panda', 'Position', panelLeftPos);
@@ -87,7 +84,7 @@ function createGUI()
     % plotAxes = axes('Parent', mainLayout);
     % Robot.plot(Robot.homeConfiguration, 'Parent', plotAxes);
     % 
-    % % Step 3: Adjust layout properties
+    % % S9tep 3: Adjust layout properties
     % set(mainLayout, 'Heights', [-1]);
     % 
     % % Optionally, you might want to add a button to trigger the plot
@@ -97,109 +94,139 @@ function createGUI()
     % drawnow
 
     % Axes for robot visualization (main and sub-axes)
-    mainAxes = axes('Parent',robotPanel, 'Position', [10, 300, 550, 450]);
-    posAxes = uiaxes(robotPanel, 'Position', [10, 140, 550, 140]);
-    velAxes = uiaxes(robotPanel, 'Position', [10, 10, 550, 140]);
-    accAxes = uiaxes(controlPanel, 'Position', [10, 140, 330, 140]);
-    torAxes = uiaxes(controlPanel, 'Position', [10, 10, 330, 140]);
+    mainAxes = uiaxes(robotPanel, 'Position', [10, 30, 550, 450]);
+    % mainAxes =  axes('Parent', robotPanel, 'Position', [10, 300, 550, 450]);
+    % axes(mainAxes)
+    % show(Robot,Robot.homeConfiguration,Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false);
+    qOld=Robot.homeConfiguration;
+    drawnow
+        % mainAxes = uiaxes(robotPanel, 'Position', [10, 300, 550, 450]);
+
+    % Call the show() function to generate the plot
+    robotPlot = show(Robot, Robot.homeConfiguration, 'Visuals', 'on', 'Collisions', 'on', 'PreservePlot', true);
+    
+    robotChildren = robotPlot.Children;
+    
+    % Set the Parent property of the children to mainAxes to plot in the UIAxes
+    for i = 1:numel(robotChildren)
+        set(robotChildren(i), 'Parent', mainAxes);
+    end
+    
+    % % Adjust the axis limits
+    % axis(mainAxes, 'tight');
+    % axis(mainAxes, 'equal');
+    % 
+    % Define custom axis limits
+    xlim(mainAxes, [-1.5, 1.5]);
+    ylim(mainAxes, [-1.5, 1.5]);
+    zlim(mainAxes, [-1.5, 1.5]);
+    % Set the desired view angle (e.g., [azimuth, elevation])
+    view(mainAxes, [0,0]);
+
+    % show(Robot,Robot.homeConfiguration,Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false)
+    % posLabel = uilabel(controlPanel, 'Text', 'End Effector Position', 'Position', [30, 510, 150, 25]);  %30, 720 
+    % posAxes = uiaxes(controlPanel, 'Position', [10, 350, 350, 140]);
+    % velAxes = uiaxes(robotPanel, 'Position', [10, 10, 550, 140]);
+    % accAxes = uiaxes(controlPanel, 'Position', [10, 140, 330, 140]);
+    % torAxes = uiaxes(controlPanel, 'Position', [10, 10, 330, 140]);
    
 
     % Create the X label and text input
-    xLabel = uilabel(controlPanel, 'Text', 'X', 'Position', [30, 720, 50, 25]);
-    xEdit = uieditfield(controlPanel, 'numeric', 'Position', [10, 700, 50, 25]);
+    xLabel = uilabel(controlPanel, 'Text', 'X', 'Position', [30, 300, 50, 25]);  %30, 720 
+    xEdit = uieditfield(controlPanel, 'numeric', 'Position', [10, 280, 50, 25]); %10, 700
     
     % Create the Y label and text input
-    yLabel = uilabel(controlPanel, 'Text', 'Y', 'Position', [90, 720, 50, 25]);
-    yEdit = uieditfield(controlPanel, 'numeric', 'Position', [70, 700, 50, 25]);
+    yLabel = uilabel(controlPanel, 'Text', 'Y', 'Position', [90, 300, 50, 25]);
+    yEdit = uieditfield(controlPanel, 'numeric', 'Position', [70, 280, 50, 25]);
     
     % Create the Z label and text input
-    zLabel = uilabel(controlPanel, 'Text', 'Z', 'Position', [150, 720, 50, 25]);
-    zEdit = uieditfield(controlPanel, 'numeric', 'Position', [130, 700, 50, 25]);
+    zLabel = uilabel(controlPanel, 'Text', 'Z', 'Position', [150, 300, 50, 25]);
+    zEdit = uieditfield(controlPanel, 'numeric', 'Position', [130, 280, 50, 25]);
 
     % Create the R label and text input
-    rLabel = uilabel(controlPanel, 'Text', 'Roll', 'Position', [200, 720, 50, 25]);
-    rEdit = uieditfield(controlPanel, 'numeric', 'Position', [190, 700, 50, 25]);
+    rLabel = uilabel(controlPanel, 'Text', 'Roll', 'Position', [200, 300, 50, 25]);
+    rEdit = uieditfield(controlPanel, 'numeric', 'Position', [190, 280, 50, 25]);
     
     % Create the P label and text input
-    pLabel = uilabel(controlPanel, 'Text', 'Pitch', 'Position', [260, 720, 50, 25]);
-    pEdit = uieditfield(controlPanel, 'numeric', 'Position', [250, 700, 50, 25]);
+    pLabel = uilabel(controlPanel, 'Text', 'Pitch', 'Position', [260, 300, 50, 25]);
+    pEdit = uieditfield(controlPanel, 'numeric', 'Position', [250, 280, 50, 25]);
     
     % Create the Y label and text input
-    yaLabel = uilabel(controlPanel, 'Text', 'Yaw', 'Position', [320, 720, 50, 25]);
-    yaEdit = uieditfield(controlPanel, 'numeric', 'Position', [310, 700, 50, 25]);
+    yaLabel = uilabel(controlPanel, 'Text', 'Yaw', 'Position', [320, 300, 50, 25]);
+    yaEdit = uieditfield(controlPanel, 'numeric', 'Position', [310, 280, 50, 25]);
     
     % Create the Payload label and text input
-    payloadLabel = uilabel(controlPanel, 'Text', 'Payload', 'Position', [12, 670, 50, 25]);
-    payloadEdit = uieditfield(controlPanel, 'numeric', 'Position', [10, 650, 50, 25]);
+    % payloadLabel = uilabel(controlPanel, 'Text', 'Payload', 'Position', [12, 670, 50, 25]);
+    % payloadEdit = uieditfield(controlPanel, 'numeric', 'Position', [10, 650, 50, 25]);
 
     % FK and IK buttons
-    fkButton = uibutton(controlPanel, 'Text', 'FK', 'Position', [80, 650, 75, 25]);
-    ikButton = uibutton(controlPanel, 'Text', 'IK', 'Position', [180, 650, 75, 25]);
+    % fkButton = uibutton(controlPanel, 'Text', 'FK', 'Position', [80, 130, 75, 25]);
+    ikButton = uibutton(controlPanel, 'Text', 'Move Robot', 'Position', [80, 100, 75, 25]);
 
     % Home button
-    homeButton = uibutton(controlPanel, 'Text', 'Home', 'Position', [280, 650, 75, 25]);
+    homeButton = uibutton(controlPanel, 'Text', 'Home', 'Position', [180, 100, 75, 25]);
 
     % Reset button
-    ResetButton = uibutton(controlPanel, 'Text', 'Reset', 'Position', [250, 300, 75, 30]);
+    % ResetButton = uibutton(controlPanel, 'Text', 'Reset', 'Position', [250, 300, 75, 30]);
 
     % Gravity Comp
-    GcompButton = uibutton(controlPanel, 'Text', 'Gravity Compensation', 'Position', [30, 300, 150, 30]);
+    % GcompButton = uibutton(controlPanel, 'Text', 'Gravity Compensation', 'Position', [30, 300, 150, 30]);
     
     % Inside the function or script
-    % Slider 1
-    uilabel(controlPanel, 'Text', 'Joint1', 'Position', [10, 630 - 20, 50, 22]);
-    slider1 = uislider(controlPanel, 'Position', [10 + 60, 630, 240, 3], 'Limits', [-180, 180]);
-    valueDisplay1 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 630 - 20, 40, 22], 'Value', slider1.Value, 'Editable', 'off');
-    slider1.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay1, 1, Joints);
-    
-    % Slider 2
-    uilabel(controlPanel, 'Text', 'Joint2', 'Position', [10, 590 - 20, 50, 22]);
-    slider2 = uislider(controlPanel, 'Position', [10 + 60, 590, 240, 3], 'Limits', [-180, 180]);
-    valueDisplay2 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 590 - 20, 40, 22], 'Value', slider2.Value, 'Editable', 'off');
-    slider2.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay2, 2, Joints);
-    
-    % Slider 3
-    uilabel(controlPanel, 'Text', 'Joint3', 'Position', [10, 550 - 20, 50, 22]);
-    slider3 = uislider(controlPanel, 'Position', [10 + 60, 550, 240, 3], 'Limits', [-180, 180]);
-    valueDisplay3 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 550 - 20, 40, 22], 'Value', slider3.Value, 'Editable', 'off');
-    slider3.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay3, 3, Joints);
-    
-    % Slider 4
-    uilabel(controlPanel, 'Text', 'Joint4', 'Position', [10, 510 - 20, 50, 22]);
-    slider4 = uislider(controlPanel, 'Position', [10 + 60, 510, 240, 3], 'Limits', [-180, 180]);
-    valueDisplay4 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 510 - 20, 40, 22], 'Value', slider4.Value, 'Editable', 'off');
-    slider4.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay4, 4, Joints);
-    
-    % Slider 5
-    uilabel(controlPanel, 'Text', 'Joint5', 'Position', [10, 470 - 20, 50, 22]);
-    slider5 = uislider(controlPanel, 'Position', [10 + 60, 470, 240, 3], 'Limits', [-180, 180]);
-    valueDisplay5 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 470 - 20, 40, 22], 'Value', slider5.Value, 'Editable', 'off');
-    slider5.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay5, 5, Joints);
-    
-    % Slider 6
-    uilabel(controlPanel, 'Text', 'Joint6', 'Position', [10, 430 - 20, 50, 22]);
-    slider6 = uislider(controlPanel, 'Position', [10 + 60, 430, 240, 3], 'Limits', [-180, 180]);
-    valueDisplay6 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 430 - 20, 40, 22], 'Value', slider6.Value, 'Editable', 'off');
-    slider6.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay6, 6, Joints);
-    
-    % Slider 7
-    uilabel(controlPanel, 'Text', 'Joint7', 'Position', [10, 390 - 20, 50, 22]);
-    slider7 = uislider(controlPanel, 'Position', [10 + 60, 390, 240, 3], 'Limits', [-180, 180]);
-    valueDisplay7 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 390 - 20, 40, 22], 'Value', slider7.Value, 'Editable', 'off');
-    slider7.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay7, 7, Joints);
-    
-    % Function to update slider value display and store in array
-    function updateSliderValueDisplay(slider, event, valueDisplay, jointNumber, Joints)
-        valueDisplay.Value = event.Value;
-        Joints(jointNumber) = slider.Value;
-    end
+    % % Slider 1
+    % uilabel(controlPanel, 'Text', 'Joint1', 'Position', [10, 500 - 20, 50, 22]);
+    % slider1 = uislider(controlPanel, 'Position', [10 + 60, 500, 240, 3], 'Limits', [-180, 180]);
+    % valueDisplay1 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 630 - 20, 40, 22], 'Value', slider1.Value, 'Editable', 'off');
+    % slider1.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay1, 1, Joints);
+    % 
+    % % Slider 2
+    % uilabel(controlPanel, 'Text', 'Joint2', 'Position', [10, 590 - 20, 50, 22]);
+    % slider2 = uislider(controlPanel, 'Position', [10 + 60, 590, 240, 3], 'Limits', [-180, 180]);
+    % valueDisplay2 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 590 - 20, 40, 22], 'Value', slider2.Value, 'Editable', 'off');
+    % slider2.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay2, 2, Joints);
+    % 
+    % % Slider 3
+    % uilabel(controlPanel, 'Text', 'Joint3', 'Position', [10, 550 - 20, 50, 22]);
+    % slider3 = uislider(controlPanel, 'Position', [10 + 60, 550, 240, 3], 'Limits', [-180, 180]);
+    % valueDisplay3 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 550 - 20, 40, 22], 'Value', slider3.Value, 'Editable', 'off');
+    % slider3.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay3, 3, Joints);
+    % 
+    % % Slider 4
+    % uilabel(controlPanel, 'Text', 'Joint4', 'Position', [10, 510 - 20, 50, 22]);
+    % slider4 = uislider(controlPanel, 'Position', [10 + 60, 510, 240, 3], 'Limits', [-180, 180]);
+    % valueDisplay4 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 510 - 20, 40, 22], 'Value', slider4.Value, 'Editable', 'off');
+    % slider4.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay4, 4, Joints);
+    % 
+    % % Slider 5
+    % uilabel(controlPanel, 'Text', 'Joint5', 'Position', [10, 470 - 20, 50, 22]);
+    % slider5 = uislider(controlPanel, 'Position', [10 + 60, 470, 240, 3], 'Limits', [-180, 180]);
+    % valueDisplay5 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 470 - 20, 40, 22], 'Value', slider5.Value, 'Editable', 'off');
+    % slider5.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay5, 5, Joints);
+    % 
+    % % Slider 6
+    % uilabel(controlPanel, 'Text', 'Joint6', 'Position', [10, 430 - 20, 50, 22]);
+    % slider6 = uislider(controlPanel, 'Position', [10 + 60, 430, 240, 3], 'Limits', [-180, 180]);
+    % valueDisplay6 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 430 - 20, 40, 22], 'Value', slider6.Value, 'Editable', 'off');
+    % slider6.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay6, 6, Joints);
+    % 
+    % % Slider 7
+    % uilabel(controlPanel, 'Text', 'Joint7', 'Position', [10, 390 - 20, 50, 22]);
+    % slider7 = uislider(controlPanel, 'Position', [10 + 60, 390, 240, 3], 'Limits', [-180, 180]);
+    % valueDisplay7 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 390 - 20, 40, 22], 'Value', slider7.Value, 'Editable', 'off');
+    % slider7.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay7, 7, Joints);
+    % 
+    % % Function to update slider value display and store in array
+    % function updateSliderValueDisplay(slider, event, valueDisplay, jointNumber, Joints)
+    %     valueDisplay.Value = event.Value;
+    %     Joints(jointNumber) = slider.Value;
+    % end
 
     % Set callbacks for FK and IK buttons if needed
-    fkButton.ButtonPushedFcn = @(btn, event) executeFK(getCurrentInputs());
+    % fkButton.ButtonPushedFcn = @(btn, event) executeFK();
     ikButton.ButtonPushedFcn = @(btn, event) executeIK(getCurrentInputs());
     % Reset values of input counters
-    ResetButton.ButtonPushedFcn = @(btn,event) executeIK();
-    GcompButton.ButtonPushedFcn = @(btn,event) gravitycomp();
+    % ResetButton.ButtonPushedFcn = @(btn,event) executeIK();
+    % GcompButton.ButtonPushedFcn = @(btn,event) gravitycomp();
     % Set callback for Home button if needed
     homeButton.ButtonPushedFcn = @(btn,event) goHomePosition();
 
@@ -219,8 +246,7 @@ function inputs = getCurrentInputs()
         'z', zEdit.Value, ...
         'roll', rEdit.Value, ...
         'pitch', pEdit.Value, ...
-        'yaw', yaEdit.Value, ...
-        'payload', payloadEdit.Value ...
+        'yaw', yaEdit.Value ...
     );
 end
 
@@ -239,56 +265,100 @@ function gravitycomp()
     params.a1=[0,0,0,0,0,0,0]';
 
     traj=make_trajectory("quintic",params)
-    for i=1:11
-
-    show(Robot,traj.q(i,:)',Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false)
-
-    tau=gravityCompensation(Robot,q);
-    drawnow
-    pause(0.01)
+    for i = 1:length(traj.q)
+        q = traj.q(i,:)
+        drawnow
+        pause(0.01)
     end
+    % for i=1:11
+    % 
+    % show(Robot,traj.q(i,:)',Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false)
+    % 
+    % tau=gravityCompensation(Robot,q);
+    % drawnow
+    % pause(0.01)
+    % end
 end
 
-function executeFK(inputs)
+function executeFK()
     global Joints kinematicModel Robot;
     disp('Executing Forward Kinematics');
+
+    global kinematicModel Robot robotPanel mainAxes;
+
+    global slider1 slider2 slider3 slider4 slider5 slider6 slider7;
     
-    % Display joint angles for debugging
-    disp('Joint angles (q):');
-    disp(Joints);
-
-    % Assuming you have a function fkinePanda to compute forward kinematics
-    % Call the function and pass the joint angles to compute the pose
-    pose = fkinePanda(kinematicModel, Joints, "space");
-
-    % Optionally display the results from the fkine function
-    disp('FK Results:');
-    disp(pose);
-    qOld=Robot.homeConfiguration;
-    currentPose = MatrixLog6(pose);
-    currentPose = [currentPose(3,2) ...
-                   currentPose(1,3) ...
-                   currentPose(2,1) ...
-                   currentPose(1:3,4)']';
-    qtest=ikinPanda(currentPose,kinematicModel)';
-    
-    tauList=moveAlongTraj(Robot,q,qOld);
-    while(true)
-
-    show(Robot,tauList,Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false)
-
-    % tau=gravityCompensation(Robot,q);
-    drawnow
-    pause(0.01)
-    waitforbuttonpress
-    end
+    % Extract pose information from the inputs structure
+    % x = inputs.x;
+    % y = inputs.y;
+    % z = inputs.z;
+    % roll = inputs.roll;
+    % pitch = inputs.pitch;
+    % yaw = inputs.yaw;
+    % 
+    % % Convert roll, pitch, yaw to rotation matrix
+    % R = eul2rotm([roll, pitch, yaw]);
+    % 
+    % % Assemble transformation matrix
+    % T = eye(4);
+    % T(1:3, 1:3) = R;
+    % T(1:3, 4) = [x; y; z];
+    % 
+    % % Convert transformation matrix to 6-dimensional vector
+    % targetPose = MatrixLog6(T);
+    % targetPoseVector = [targetPose(3,2); targetPose(1,3); targetPose(2,1); targetPose(1:3,4)];
+    % 
+    % % Call ikinPanda function with the targetPoseVector
+    % q = ikinPanda(targetPoseVector, kinematicModel);
+    % qOld=Robot.homeConfiguration;
+    % 
+    % params.q0=qOld;
+    % params.q1=q;
+    % params.v0=[0,0,0,0,0,0,0]';
+    % params.v1=[0,0,0,0,0,0,0]';
+    % params.t0=0;
+    % params.t1=0.1;
+    % params.dt=0.01;
+    % params.a0=[0,0,0,0,0,0,0]';
+    % params.a1=[0,0,0,0,0,0,0]';
+    % 
+    % traj=make_trajectory("quintic",params)
+    % for i = 1:length(traj.q)
+    %     q = traj.q(i,:);
+    %     cla(mainAxes);
+    %     % show(Robot,q',Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false)
+    %     robotPlot = show(Robot, q', 'Visuals', 'on', 'Collisions', 'on', 'PreservePlot', false);
+    % 
+    %     % Get the children (i.e., graphics objects) of the generated plot
+    %     robotChildren = robotPlot.Children;
+    % 
+    %     % Set the Parent property of the children to mainAxes to plot in the UIAxes
+    %     for i = 1:numel(robotChildren)
+    %         set(robotChildren(i), 'Parent', mainAxes);
+    %     end
+    % 
+    %     % % Adjust the axis limits
+    %     % axis(mainAxes, 'tight');
+    %     % axis(mainAxes, 'equal');
+    %     % 
+    %     % Define custom axis limits
+    %     xlim(mainAxes, [-1.5, 1.5]);
+    %     ylim(mainAxes, [-1.5, 1.5]);
+    %     zlim(mainAxes, [-1.5, 1.5]);
+    %     % Set the desired view angle (e.g., [azimuth, elevation])
+    %     view(mainAxes, [0,0]);
+    % 
+    % 
+    %     drawnow
+    %     pause(0.5)
+    % end
 
 end
 
 
 
 function executeIK(inputs)
-    global kinematicModel;
+    global kinematicModel Robot robotPanel mainAxes;
     disp('Executing Inverse Kinematics');
     
     % Extract pose information from the inputs structure
@@ -313,26 +383,121 @@ function executeIK(inputs)
 
     % Call ikinPanda function with the targetPoseVector
     q = ikinPanda(targetPoseVector, kinematicModel);
+    qOld=Robot.homeConfiguration;
+  
+    params.q0=qOld;
+    params.q1=q;
+    params.v0=[0,0,0,0,0,0,0]';
+    params.v1=[0,0,0,0,0,0,0]';
+    params.t0=0;
+    params.t1=0.1;
+    params.dt=0.01;
+    params.a0=[0,0,0,0,0,0,0]';
+    params.a1=[0,0,0,0,0,0,0]';
+    
+    traj=make_trajectory("quintic",params)
+    for i = 1:length(traj.q)
+        q = traj.q(i,:);
+        cla(mainAxes);
+        % show(Robot,q',Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false)
+        robotPlot = show(Robot, q', 'Visuals', 'on', 'Collisions', 'on', 'PreservePlot', false);
+        
+        % Get the children (i.e., graphics objects) of the generated plot
+        robotChildren = robotPlot.Children;
+        
+        % Set the Parent property of the children to mainAxes to plot in the UIAxes
+        for i = 1:numel(robotChildren)
+            set(robotChildren(i), 'Parent', mainAxes);
+        end
+        
+        % % Adjust the axis limits
+        % axis(mainAxes, 'tight');
+        % axis(mainAxes, 'equal');
+        % 
+        % Define custom axis limits
+        xlim(mainAxes, [-1.5, 1.5]);
+        ylim(mainAxes, [-1.5, 1.5]);
+        zlim(mainAxes, [-1.5, 1.5]);
+        % Set the desired view angle (e.g., [azimuth, elevation])
+        view(mainAxes, [0,0]);
+
+        
+        drawnow
+        pause(0.5)
+    end
 end
 
 
 function goHomePosition()
-    global Robot;
-    qOld= Robot.homeConfiguration;
+     global kinematicModel Robot robotPanel mainAxes;
     disp('Resetting to Home Position');
-    % Add code to reset the robot to its home configuration here
-    q=[0,0,0,0,0,0,0]';
-    pose=fkinePanda(kinematicModel,q,"space");
-    currentPose = MatrixLog6(pose);
-    currentPose = [currentPose(3,2) ...
-                   currentPose(1,3) ...
-                   currentPose(2,1) ...
-                   currentPose(1:3,4)']';
-    qtest=ikinPanda(currentPose,kinematicModel)';
+    % 
+    % % Extract pose information from the inputs structure
+    % x = 0;
+    % y = 0;
+    % z = 0;
+    % roll = 0;
+    % pitch = 0;
+    % yaw = 0;
+    % 
+    % % Convert roll, pitch, yaw to rotation matrix
+    % R = eul2rotm([roll, pitch, yaw]);
+    % 
+    % % Assemble transformation matrix
+    % T = eye(4);
+    % T(1:3, 1:3) = R;
+    % T(1:3, 4) = [x; y; z];
+    % 
+    % % Convert transformation matrix to 6-dimensional vector
+    % targetPose = MatrixLog6(T);
+    % targetPoseVector = [targetPose(3,2); targetPose(1,3); targetPose(2,1); targetPose(1:3,4)];
+    % 
+    % % Call ikinPanda function with the targetPoseVector
+    % q = ikinPanda(targetPoseVector, kinematicModel);
+    qOld=Robot.homeConfiguration;
+    % 
+    params.q0=qOld;
+    params.q1=qOld;
+    params.v0=[0,0,0,0,0,0,0]';
+    params.v1=[0,0,0,0,0,0,0]';
+    params.t0=0;
+    params.t1=0.1;
+    params.dt=0.01;
+    params.a0=[0,0,0,0,0,0,0]';
+    params.a1=[0,0,0,0,0,0,0]';
+
+    % Robot = Robot.homeConfiguration;
     
-    tauList=moveAlongTraj(Robot,q,qOld);
+    traj=make_trajectory("quintic",params)
+    for i = 1:length(traj.q)
+        q = traj.q(i,:);
+        cla(mainAxes);
+        % show(Robot,q',Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false)
+        robotPlot = show(Robot, q', 'Visuals', 'on', 'Collisions', 'on', 'PreservePlot', false);
+        
+        % Get the children (i.e., graphics objects) of the generated plot
+        robotChildren = robotPlot.Children;
+        
+        % Set the Parent property of the children to mainAxes to plot in the UIAxes
+        for i = 1:numel(robotChildren)
+            set(robotChildren(i), 'Parent', mainAxes);
+        end
+        
+        % % Adjust the axis limits
+        % axis(mainAxes, 'tight');
+        % axis(mainAxes, 'equal');
+        % 
+        % Define custom axis limits
+        xlim(mainAxes, [-1.5, 1.5]);
+        ylim(mainAxes, [-1.5, 1.5]);
+        zlim(mainAxes, [-1.5, 1.5]);
+        % Set the desired view angle (e.g., [azimuth, elevation])
+        view(mainAxes, [0,0]);
 
-
+        
+        drawnow
+        pause(0.5)
+    end
 end
 
 function animateRobot(src, event, robot, robotAxes)

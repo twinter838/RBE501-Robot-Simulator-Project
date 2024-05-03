@@ -16,7 +16,7 @@ end
 %
 
 disp("Showing Robot")
-Robot=importrobot(urdf)
+Robot=importrobot(urdf);
 if(useVectorFormat==true)
 Robot.DataFormat='Column';
 end

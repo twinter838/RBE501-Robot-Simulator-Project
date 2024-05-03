@@ -130,45 +130,45 @@ function createGUI()
     % show(Robot,Robot.homeConfiguration,Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false)
     % posLabel = uilabel(controlPanel, 'Text', 'End Effector Position', 'Position', [30, 510, 150, 25]);  %30, 720 
     % posAxes = uiaxes(controlPanel, 'Position', [10, 350, 350, 140]);
-    % velAxes = uiaxes(robotPanel, 'Position', [10, 10, 550, 140]);
-    % accAxes = uiaxes(controlPanel, 'Position', [10, 140, 330, 140]);
-    % torAxes = uiaxes(controlPanel, 'Position', [10, 10, 330, 140]);
+    velAxes = uiaxes(controlPanel, 'Position', [10, 270, 350, 120]);
+    accAxes = uiaxes(controlPanel, 'Position', [10, 140, 350, 120]);
+    torAxes = uiaxes(controlPanel, 'Position', [10, 20, 350, 100]);
    
 
     % Create the X label and text input
-    xLabel = uilabel(controlPanel, 'Text', 'X', 'Position', [30, 300, 50, 25]);  %30, 720 
-    xEdit = uieditfield(controlPanel, 'numeric', 'Position', [10, 280, 50, 25]); %10, 700
+    xLabel = uilabel(controlPanel, 'Text', 'X', 'Position', [30, 520, 50, 25]);  %30, 720 
+    xEdit = uieditfield(controlPanel, 'numeric', 'Position', [10, 500, 50, 25]); %10, 700
     
     % Create the Y label and text input
-    yLabel = uilabel(controlPanel, 'Text', 'Y', 'Position', [90, 300, 50, 25]);
-    yEdit = uieditfield(controlPanel, 'numeric', 'Position', [70, 280, 50, 25]);
+    yLabel = uilabel(controlPanel, 'Text', 'Y', 'Position', [90, 520, 50, 25]);
+    yEdit = uieditfield(controlPanel, 'numeric', 'Position', [70, 500, 50, 25]);
     
     % Create the Z label and text input
-    zLabel = uilabel(controlPanel, 'Text', 'Z', 'Position', [150, 300, 50, 25]);
-    zEdit = uieditfield(controlPanel, 'numeric', 'Position', [130, 280, 50, 25]);
+    zLabel = uilabel(controlPanel, 'Text', 'Z', 'Position', [150, 520, 50, 25]);
+    zEdit = uieditfield(controlPanel, 'numeric', 'Position', [130, 500, 50, 25]);
 
     % Create the R label and text input
-    rLabel = uilabel(controlPanel, 'Text', 'Roll', 'Position', [200, 300, 50, 25]);
-    rEdit = uieditfield(controlPanel, 'numeric', 'Position', [190, 280, 50, 25]);
+    rLabel = uilabel(controlPanel, 'Text', 'Roll', 'Position', [200, 520, 50, 25]);
+    rEdit = uieditfield(controlPanel, 'numeric', 'Position', [190, 500, 50, 25]);
     
     % Create the P label and text input
-    pLabel = uilabel(controlPanel, 'Text', 'Pitch', 'Position', [260, 300, 50, 25]);
-    pEdit = uieditfield(controlPanel, 'numeric', 'Position', [250, 280, 50, 25]);
+    pLabel = uilabel(controlPanel, 'Text', 'Pitch', 'Position', [260, 520, 50, 25]);
+    pEdit = uieditfield(controlPanel, 'numeric', 'Position', [250, 500, 50, 25]);
     
     % Create the Y label and text input
-    yaLabel = uilabel(controlPanel, 'Text', 'Yaw', 'Position', [320, 300, 50, 25]);
-    yaEdit = uieditfield(controlPanel, 'numeric', 'Position', [310, 280, 50, 25]);
+    yaLabel = uilabel(controlPanel, 'Text', 'Yaw', 'Position', [320, 520, 50, 25]);
+    yaEdit = uieditfield(controlPanel, 'numeric', 'Position', [310, 500, 50, 25]);
     
     % Create the Payload label and text input
-    % payloadLabel = uilabel(controlPanel, 'Text', 'Payload', 'Position', [12, 670, 50, 25]);
-    % payloadEdit = uieditfield(controlPanel, 'numeric', 'Position', [10, 650, 50, 25]);
+    payloadLabel = uilabel(controlPanel, 'Text', 'Payload', 'Position', [12, 470, 50, 25]);
+    payloadEdit = uieditfield(controlPanel, 'numeric', 'Position', [10, 450, 50, 25]);
 
     % FK and IK buttons
     % fkButton = uibutton(controlPanel, 'Text', 'FK', 'Position', [80, 130, 75, 25]);
-    ikButton = uibutton(controlPanel, 'Text', 'Move Robot', 'Position', [80, 100, 75, 25]);
+    ikButton = uibutton(controlPanel, 'Text', 'Move Robot', 'Position', [80, 450, 75, 25]);
 
     % Home button
-    homeButton = uibutton(controlPanel, 'Text', 'Home', 'Position', [180, 100, 75, 25]);
+    homeButton = uibutton(controlPanel, 'Text', 'Home', 'Position', [200, 450, 75, 25]);
 
     % Reset button
     % ResetButton = uibutton(controlPanel, 'Text', 'Reset', 'Position', [250, 300, 75, 30]);
@@ -250,7 +250,8 @@ function inputs = getCurrentInputs()
         'z', zEdit.Value, ...
         'roll', rEdit.Value, ...
         'pitch', pEdit.Value, ...
-        'yaw', yaEdit.Value ...
+        'yaw', yaEdit.Value, ...
+        'payload', payloadEdit.Value ...
     );
 end
 
@@ -378,6 +379,7 @@ end
 
 function executeIK(inputs)
     global kinematicModel Robot robotPanel mainAxes RNEParams;
+    global velAxes accAxes torAxes;
     disp('Executing Inverse Kinematics');
     
     % Extract pose information from the inputs structure
@@ -387,6 +389,7 @@ function executeIK(inputs)
     roll = inputs.roll;
     pitch = inputs.pitch;
     yaw = inputs.yaw;
+    payload = inputs.payload;
 
     % Convert roll, pitch, yaw to rotation matrix
     R = eul2rotm([roll, pitch, yaw]);
@@ -413,31 +416,35 @@ function executeIK(inputs)
     params.dt=0.01;
     params.a0=[0,0,0,0,0,0,0]';
     params.a1=[0,0,0,0,0,0,0]';
-    traj=make_trajectory("quintic",params)
-    tauList=[]
+    traj=make_trajectory("quintic",params);
+    
+    tauList = [];
+    velList = [];
+    accList = [];
+    
     for i = 1:length(traj.q)
         q = traj.q(i,:);
         cla(mainAxes);
         % show(Robot,q',Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false)
         robotPlot = show(Robot, q', 'Visuals', 'on', 'Collisions', 'off', 'PreservePlot', false);
-        RNEParams.jointPos=traj.q(i,:);
-        RNEParams.jointVel=traj.v(i,:);
-        RNEParams.jointAcc=traj.a(i,:);
-        tau=rne(RNEParams);
-        %tau=tau+gravityCompensation(Robot,q);
-        tauList=[tauList,tau];
+        RNEParams.jointPos = traj.q(i,:);
+        RNEParams.jointVel = traj.v(i,:);
+        RNEParams.jointAcc = traj.a(i,:);
+        tau = rne(RNEParams);
+        
+        % Collect joint velocities, accelerations, and torques
+        velList = [velList; traj.v(i,:)];
+        accList = [accList; traj.a(i,:)];
+        tauList = [tauList; tau];
+        
         % Get the children (i.e., graphics objects) of the generated plot
         robotChildren = robotPlot.Children;
         
         % Set the Parent property of the children to mainAxes to plot in the UIAxes
-        for i = 1:numel(robotChildren)
-            set(robotChildren(i), 'Parent', mainAxes);
+        for j = 1:numel(robotChildren)
+            set(robotChildren(j), 'Parent', mainAxes);
         end
         
-        % % Adjust the axis limits
-        % axis(mainAxes, 'tight');
-        % axis(mainAxes, 'equal');
-        % 
         % Define custom axis limits
         xlim(mainAxes, [-1.5, 1.5]);
         ylim(mainAxes, [-1.5, 1.5]);
@@ -445,12 +452,42 @@ function executeIK(inputs)
         % Set the desired view angle (e.g., [azimuth, elevation])
         view(mainAxes, [0,0]);
 
-        
         drawnow
         pause(0.1)
     end
-    tauList
+    
+    % Plot joint velocities on velAxes
+    for i = 1:7
+        plot(velAxes, velList(:,i));
+        hold(velAxes, 'on');
+    end
+    title(velAxes, 'Joint Velocities');
+    xlabel(velAxes, 'Time');
+    ylabel(velAxes, 'Velocity');
+    hold(velAxes, 'off');
+    
+    % Plot joint accelerations on accAxes
+    for i = 1:7
+        plot(accAxes, accList(:,i));
+        hold(accAxes, 'on');
+    end
+    title(accAxes, 'Joint Accelerations');
+    xlabel(accAxes, 'Time');
+    ylabel(accAxes, 'Acceleration');
+    hold(accAxes, 'off');
+    
+    % Plot joint torques on torAxes
+    for i = 1:7
+        plot(torAxes, tauList(:,i));
+        hold(torAxes, 'on');
+    end
+    title(torAxes, 'Joint Torques');
+    xlabel(torAxes, 'Time');
+    ylabel(torAxes, 'Torque');
+    hold(torAxes, 'off');
+    
 end
+
 
 
 function goHomePosition()
@@ -539,62 +576,3 @@ function animateRobot(src, event, robot, robotAxes)
     show(robot, 'Configuration', currentQ, 'PreservePlot', false, 'Parent', robotAxes);
 end
 
-function plot_function(tau_acc,jointPos_acc,jointVel_acc,jointAcl_acc, t_acc)
-
-    global robotPanel;
-    % Plotting the joint positions on the  axesPositions
-    posAxes = axes('Parent', robotPanel, 'Position', [0.1, 0.75, 0.8, 0.2]);
-    velAxes = axes('Parent', robotPanel, 'Position', [0.1, 0.5, 0.8, 0.2]);
-    accAxes = axes('Parent', robotPanel, 'Position', [0.1, 0.25, 0.8, 0.2]);
-    torAxes = axes('Parent', robotPanel, 'Position', [0.1, 0.05, 0.8, 0.2]);
-
-    % cla(robotAxes);
-    plot(axesPositions, t_acc, jointPos_acc(1,:), 'LineWidth', 2);
-    hold(axesPositions, 'on');
-    for j = 2:size(jointPos_acc, 1)
-        plot(axesPositions, t_acc, jointPos_acc(j,:), 'LineWidth', 2);
-    end
-    hold( axesPositions, 'off');
-    title( axesPositions, 'Joint Positions');
-    legend( axesPositions, {'Joint 1', 'Joint 2', 'Joint 3', 'Joint 4', 'Joint 5', 'Joint 6'});
-    xlabel( axesPositions, 'Time [s]'), ylabel( axesPositions, 'Joint Position');
-    set( axesPositions, 'FontSize', 14);
-
-    % Plotting the joint velocities on the  axesVelocities
-    plot(axesVelocities, t_acc, jointVel_acc(1,:), 'LineWidth', 2);
-    hold(axesVelocities, 'on');
-    for j = 2:size(jointVel_acc, 1)
-        plot(axesVelocities, t_acc, jointVel_acc(j,:), 'LineWidth', 2);
-    end
-    hold( axesVelocities, 'off');
-    title( axesVelocities, 'Joint Velocities');
-    legend( axesVelocities, {'Joint 1', 'Joint 2', 'Joint 3', 'Joint 4', 'Joint 5', 'Joint 6'});
-    xlabel(axesVelocities, 'Time [s]'), ylabel( axesVelocities, 'Joint Velocities ');
-    set(axesVelocities, 'FontSize', 14);
-
-
-    % Plotting the joint accelerations on the  axesAccelerations
-    plot(axesAccelerations, t_acc, jointAcl_acc(1,:), 'LineWidth', 2);
-    hold(axesAccelerations, 'on');
-    for j = 2:size(jointAcl_acc, 1)
-        plot(axesAccelerations, t_acc, jointAcl_acc(j,:), 'LineWidth', 2);
-    end
-    hold(axesAccelerations, 'off');
-    title(axesAccelerations, 'Joint Accelerations');
-    legend(axesAccelerations, {'Joint 1', 'Joint 2', 'Joint 3', 'Joint 4', 'Joint 5', 'Joint 6'});
-    xlabel( axesAccelerations, 'Time [s]'), ylabel(axesAccelerations, 'Joint Accelerations');
-    set(axesAccelerations, 'FontSize', 14);
-
-    % Plotting the torque profiles on the axesTorques
-    plot(axesTorques, t_acc, tau_acc(1,:), 'LineWidth', 2);
-    hold(axesTorques, 'on');
-    for j = 2:size(tau_acc, 1)
-        plot(axesTorques, t_acc, tau_acc(j,:), 'LineWidth', 2);
-    end
-    hold(axesTorques, 'off');
-    title(axesTorques, 'Joint Torques');
-    legend(axesTorques, {'Joint 1', 'Joint 2', 'Joint 3', 'Joint 4', 'Joint 5', 'Joint 6'});
-    xlabel(axesTorques, 'Time [s]'), ylabel(axesTorques, 'Torque [Nm]');
-    set(axesTorques, 'FontSize', 14);
-
-end

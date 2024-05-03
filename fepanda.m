@@ -13,7 +13,7 @@ function createFrankaEmikaPandaSimulatorApp()
     global Joints;
     global fkButton ikButton homeButton ResetButton GcompButton;
     global RNEParams
-  
+    global qOld
     % Create and plot the robot using the GenerateRobot function
     Robot=GenerateRobot("panda.urdf",true,[0,0,-9.81]);
     createGUI();
@@ -141,7 +141,7 @@ end
 
 % Function to gather current inputs from UI components
 function inputs = getCurrentInputs()
-    global xEdit yEdit zEdit rEdit pEdit yaEdit payloadEdit;
+    global xEdit yEdit zEdit rEdit pEdit yaEdit payloadEdit RNEParams;
 
     % Assuming xEdit, yEdit, zEdit, rEdit, pEdit, yaEdit, and payloadEdit are
     % defined in the same script or passed as arguments or available as global.
@@ -154,10 +154,11 @@ function inputs = getCurrentInputs()
         'yaw', yaEdit.Value, ...
         'payload', payloadEdit.Value ...
     );
+    RNEParams.Ftip=[0,0,0,0,0,-payloadEdit.Value]
 end
 
 function gravitycomp()
- global Joints kinematicModel Robot RNEParams;
+ global Joints kinematicModel Robot RNEParams qOld;
     qOld=Robot.homeConfiguration;
     q=Robot.randomConfiguration
     params.q0=qOld;
@@ -175,7 +176,6 @@ function gravitycomp()
     RNEParams.g=Robot.Gravity;
     RNEParams.M=kinematicModel.Mlist;
     RNEParams.S=kinematicModel.S;
-    RNEParams.Ftip=[0,0,0,0,0,0]';
 
     tauList=[]
     traj=make_trajectory("quintic",params)
@@ -191,6 +191,7 @@ function gravitycomp()
         pause(0.01)
     end
     tauList
+    qOld=q'
     % for i=1:11
     % 
     % show(Robot,traj.q(i,:)',Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false)
@@ -279,7 +280,7 @@ end
 
 
 function executeIK(inputs)
-    global kinematicModel Robot robotPanel mainAxes RNEParams;
+    global kinematicModel Robot robotPanel mainAxes RNEParams qOld;
     global velAxes accAxes torAxes;
     disp('Executing Inverse Kinematics');
     
@@ -305,9 +306,7 @@ function executeIK(inputs)
     targetPoseVector = [targetPose(3,2); targetPose(1,3); targetPose(2,1); targetPose(1:3,4)];
 
     % Call ikinPanda function with the targetPoseVector
-    q = ikinPanda(targetPoseVector, kinematicModel);
-    qOld=Robot.homeConfiguration;
-  
+    q = ikinPanda(targetPoseVector, kinematicModel);  
     params.q0=qOld;
     params.q1=q;
     params.v0=[0,0,0,0,0,0,0]';
@@ -356,7 +355,7 @@ function executeIK(inputs)
         drawnow
         pause(0.1)
     end
-    
+    qOld=q';
     % Plot joint velocities on velAxes
     for i = 1:7
         plot(velAxes, velList(:,i));
@@ -397,7 +396,7 @@ end
 
 
 function goHomePosition()
-     global kinematicModel Robot robotPanel mainAxes RNEParams;
+     global kinematicModel Robot robotPanel mainAxes RNEParams qOld;
     disp('Resetting to Home Position');
     % 
     % % Extract pose information from the inputs structure
@@ -422,10 +421,9 @@ function goHomePosition()
     % 
     % % Call ikinPanda function with the targetPoseVector
     % q = ikinPanda(targetPoseVector, kinematicModel);
-    qOld=Robot.homeConfiguration;
     % 
     params.q0=qOld;
-    params.q1=qOld;
+    params.q1=Robot.homeConfiguration;
     params.v0=[0,0,0,0,0,0,0]';
     params.v1=[0,0,0,0,0,0,0]';
     params.t0=0;
@@ -471,6 +469,7 @@ function goHomePosition()
         drawnow
         pause(0.5)
     end
+    qOld=Robot.homeConfiguration;
 end
 
 function animateRobot(src, event, robot, robotAxes)

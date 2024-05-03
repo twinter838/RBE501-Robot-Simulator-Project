@@ -154,7 +154,7 @@ function inputs = getCurrentInputs()
         'yaw', yaEdit.Value, ...
         'payload', payloadEdit.Value ...
     );
-    RNEParams.Ftip=[0,0,0,0,0,-payloadEdit.Value]
+    RNEParams.Ftip=[0,0,0,0,0,-payloadEdit.Value];
 end
 
 function gravitycomp()

@@ -23,6 +23,7 @@ function createFrankaEmikaPandaSimulatorApp()
     RNEParams.M=kinematicModel.Mlist;
     RNEParams.S=kinematicModel.S;
     RNEParams.Ftip=[0,0,0,0,0,0]';
+    qOld=Robot.homeConfiguration;
 end
 
 function createGUI()
@@ -51,7 +52,7 @@ function createGUI()
     % Axes for robot visualization (main and sub-axes)
     mainAxes = uiaxes(robotPanel, 'Position', [10, 30, 550, 450]);
 
-    qOld=Robot.homeConfiguration;
+    
     % drawnow
 
     % Call the show() function to generate the plot

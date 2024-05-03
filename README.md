@@ -12,4 +12,8 @@ Parameters -
 https://frankaemika.github.io/docs/control_parameters.html
 
 Inputs to try
-
+Input 1: 1,0.2,0.1,0,0,0 
+Input 2 -0.3,0.8,0.7,90,0,0
+Input 3: 0.1,0.2,0.9,0,0,180
+Input 4: 0.5,0.1,-0.1,0,180,0
+Input 5 0.2,0.2,1,90,180,35

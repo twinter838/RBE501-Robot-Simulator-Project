@@ -23,38 +23,6 @@ function createFrankaEmikaPandaSimulatorApp()
     RNEParams.M=kinematicModel.Mlist;
     RNEParams.S=kinematicModel.S;
     RNEParams.Ftip=[0,0,0,0,0,0]';
-
-    % show(Robot, 'PreservePlot', false, 'Parent', mainAxes);
-    % show(Robot,Robot.homeConfiguration,Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false);
-    % drawnow
-    % Robot=loadrobot("frankaEmikaPanda","DataFormat","column")
-    %Generates a new random config of the robot every time a button is pressed
-    % while(true)
-    % showdetails(Robot)
-    % q=Robot.randomConfiguration
-    % q=[0,pi/2,0,0,0,0,0]'
-    % show(Robot,q,Visuals="off",Collisions="off",FastUpdate=true,PreservePlot=false)
-
-    % while(true)
-    %     showdetails(Robot)
-    %     waitforbuttonpress
-    % end
-    
-    % EEpos=fkinePanda(kinematicModel,q,"space")
-    % qTrue=getTransform(Robot,q,"panda_link8")
-    %    currentPose = MatrixLog6(EEpos);
-    %         currentPose = [currentPose(3,2) ...
-    %                        currentPose(1,3) ...
-    %                        currentPose(2,1) ...
-    %                        currentPose(1:3,4)']';
-    % qtest=ikinPanda(currentPose,kinematicModel)'
-    % drawnow
-    % tau=gravityCompensation(Robot,q)
-    % 
-    % % show(robot, 'PreservePlot', false, 'Parent', robotAxes);
-    % currentQ = zeros(1,7);  % Franka has 7 DOFs
-
-
 end
 
 function createGUI()
@@ -79,32 +47,12 @@ function createGUI()
     % Create panels
     robotPanel = uipanel(fig, 'Title', 'Robot - Franka Emika Panda', 'Position', panelLeftPos);
     controlPanel = uipanel(fig, 'Title', 'Control Panel', 'Position', panelRightPos);
-    % Step 1: Create a uix container
-    % % fig = figure;
-    % mainLayout = uix.VBox('Parent', fig);
-    % 
-    % % Step 2: Generate your robotics toolbox plot
-    % % Assuming 'Robot' is an object of your robotics toolbox
-    % plotAxes = axes('Parent', mainLayout);
-    % Robot.plot(Robot.homeConfiguration, 'Parent', plotAxes);
-    % 
-    % % S9tep 3: Adjust layout properties
-    % set(mainLayout, 'Heights', [-1]);
-    % 
-    % % Optionally, you might want to add a button to trigger the plot
-    % % button = uicontrol('Parent', mainLayout, 'Style', 'pushbutton', 'String', 'Plot', 'Callback', @(src,event) updatePlot());
-    % 
-    % % Optional: Ensure the UI updates to display the new plot immediately
-    % drawnow
 
     % Axes for robot visualization (main and sub-axes)
     mainAxes = uiaxes(robotPanel, 'Position', [10, 30, 550, 450]);
-    % mainAxes =  axes('Parent', robotPanel, 'Position', [10, 300, 550, 450]);
-    % axes(mainAxes)
-    % show(Robot,Robot.homeConfiguration,Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false);
+
     qOld=Robot.homeConfiguration;
-    drawnow
-        % mainAxes = uiaxes(robotPanel, 'Position', [10, 300, 550, 450]);
+    % drawnow
 
     % Call the show() function to generate the plot
     robotPlot = show(Robot, Robot.homeConfiguration, 'Visuals', 'on', 'Collisions', 'off', 'PreservePlot', true);
@@ -165,72 +113,25 @@ function createGUI()
 
     % FK and IK buttons
     % fkButton = uibutton(controlPanel, 'Text', 'FK', 'Position', [80, 130, 75, 25]);
-    ikButton = uibutton(controlPanel, 'Text', 'Move Robot', 'Position', [80, 450, 75, 25]);
+    ikButton = uibutton(controlPanel, 'Text', 'Move Robot!', 'Position', [120, 450, 140, 40]);
 
     % Home button
-    homeButton = uibutton(controlPanel, 'Text', 'Home', 'Position', [200, 450, 75, 25]);
+    homeButton = uibutton(controlPanel, 'Text', 'Home', 'Position', [220, 400, 120, 25]);
 
     % Reset button
     % ResetButton = uibutton(controlPanel, 'Text', 'Reset', 'Position', [250, 300, 75, 30]);
 
     % Gravity Comp
-    % GcompButton = uibutton(controlPanel, 'Text', 'Gravity Compensation', 'Position', [30, 300, 150, 30]);
+    GcompButton = uibutton(controlPanel, 'Text', 'Gravity Comp', 'Position', [20, 400, 120, 25]);
     
-    % Inside the function or script
-    % % Slider 1
-    % uilabel(controlPanel, 'Text', 'Joint1', 'Position', [10, 500 - 20, 50, 22]);
-    % slider1 = uislider(controlPanel, 'Position', [10 + 60, 500, 240, 3], 'Limits', [-180, 180]);
-    % valueDisplay1 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 630 - 20, 40, 22], 'Value', slider1.Value, 'Editable', 'off');
-    % slider1.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay1, 1, Joints);
-    % 
-    % % Slider 2
-    % uilabel(controlPanel, 'Text', 'Joint2', 'Position', [10, 590 - 20, 50, 22]);
-    % slider2 = uislider(controlPanel, 'Position', [10 + 60, 590, 240, 3], 'Limits', [-180, 180]);
-    % valueDisplay2 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 590 - 20, 40, 22], 'Value', slider2.Value, 'Editable', 'off');
-    % slider2.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay2, 2, Joints);
-    % 
-    % % Slider 3
-    % uilabel(controlPanel, 'Text', 'Joint3', 'Position', [10, 550 - 20, 50, 22]);
-    % slider3 = uislider(controlPanel, 'Position', [10 + 60, 550, 240, 3], 'Limits', [-180, 180]);
-    % valueDisplay3 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 550 - 20, 40, 22], 'Value', slider3.Value, 'Editable', 'off');
-    % slider3.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay3, 3, Joints);
-    % 
-    % % Slider 4
-    % uilabel(controlPanel, 'Text', 'Joint4', 'Position', [10, 510 - 20, 50, 22]);
-    % slider4 = uislider(controlPanel, 'Position', [10 + 60, 510, 240, 3], 'Limits', [-180, 180]);
-    % valueDisplay4 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 510 - 20, 40, 22], 'Value', slider4.Value, 'Editable', 'off');
-    % slider4.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay4, 4, Joints);
-    % 
-    % % Slider 5
-    % uilabel(controlPanel, 'Text', 'Joint5', 'Position', [10, 470 - 20, 50, 22]);
-    % slider5 = uislider(controlPanel, 'Position', [10 + 60, 470, 240, 3], 'Limits', [-180, 180]);
-    % valueDisplay5 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 470 - 20, 40, 22], 'Value', slider5.Value, 'Editable', 'off');
-    % slider5.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay5, 5, Joints);
-    % 
-    % % Slider 6
-    % uilabel(controlPanel, 'Text', 'Joint6', 'Position', [10, 430 - 20, 50, 22]);
-    % slider6 = uislider(controlPanel, 'Position', [10 + 60, 430, 240, 3], 'Limits', [-180, 180]);
-    % valueDisplay6 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 430 - 20, 40, 22], 'Value', slider6.Value, 'Editable', 'off');
-    % slider6.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay6, 6, Joints);
-    % 
-    % % Slider 7
-    % uilabel(controlPanel, 'Text', 'Joint7', 'Position', [10, 390 - 20, 50, 22]);
-    % slider7 = uislider(controlPanel, 'Position', [10 + 60, 390, 240, 3], 'Limits', [-180, 180]);
-    % valueDisplay7 = uieditfield(controlPanel, 'numeric', 'Position', [10 + 240 + 80, 390 - 20, 40, 22], 'Value', slider7.Value, 'Editable', 'off');
-    % slider7.ValueChangingFcn = @(sld,event) updateSliderValueDisplay(sld, event, valueDisplay7, 7, Joints);
-    % 
-    % % Function to update slider value display and store in array
-    % function updateSliderValueDisplay(slider, event, valueDisplay, jointNumber, Joints)
-    %     valueDisplay.Value = event.Value;
-    %     Joints(jointNumber) = slider.Value;
-    % end
+  
 
     % Set callbacks for FK and IK buttons if needed
     % fkButton.ButtonPushedFcn = @(btn, event) executeFK();
     ikButton.ButtonPushedFcn = @(btn, event) executeIK(getCurrentInputs());
     % Reset values of input counters
     % ResetButton.ButtonPushedFcn = @(btn,event) executeIK();
-    % GcompButton.ButtonPushedFcn = @(btn,event) gravitycomp();
+    GcompButton.ButtonPushedFcn = @(btn,event) gravitycomp();
     % Set callback for Home button if needed
     homeButton.ButtonPushedFcn = @(btn,event) goHomePosition();
 

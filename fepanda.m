@@ -378,6 +378,10 @@ function executeIK(inputs)
     hold(accAxes, 'off');
     
     % Plot joint torques on torAxes
+    % Reshape tauList into a 7xT matrix
+    tauList = reshape(tauList, [], 7);
+    
+    % Plot joint torques on torAxes
     for i = 1:7
         plot(torAxes, tauList(:,i));
         hold(torAxes, 'on');
@@ -386,6 +390,7 @@ function executeIK(inputs)
     xlabel(torAxes, 'Time');
     ylabel(torAxes, 'Torque');
     hold(torAxes, 'off');
+
     
 end
 

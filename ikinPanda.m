@@ -17,7 +17,7 @@ M=kinematicModel.M;
 
     %_______________________
     i = 0;
- while distance > .01
+ while distance > .01 && i<50000
         currentQ;
         J = jacob0(S, currentQ);
         deltaQ=J'*pinv(J*J'+lambda^2*eye(6))*(targetPose - currentPose);

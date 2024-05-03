@@ -12,13 +12,17 @@ function createFrankaEmikaPandaSimulatorApp()
     global  mainAxes posAxes velAxes accAxes torAxes;
     global Joints;
     global fkButton ikButton homeButton ResetButton GcompButton;
-
+    global RNEParams
   
     % Create and plot the robot using the GenerateRobot function
     Robot=GenerateRobot("panda.urdf",true,[0,0,-9.81]);
     createGUI();
     kinematicModel=generateKinematicModel(Robot);
-
+    RNEParams.G=spatialInertialMatrix(Robot);
+    RNEParams.g=Robot.Gravity;
+    RNEParams.M=kinematicModel.Mlist;
+    RNEParams.S=kinematicModel.S;
+    RNEParams.Ftip=[0,0,0,0,0,0]';
 
     % show(Robot, 'PreservePlot', false, 'Parent', mainAxes);
     % show(Robot,Robot.homeConfiguration,Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false);
@@ -103,7 +107,7 @@ function createGUI()
         % mainAxes = uiaxes(robotPanel, 'Position', [10, 300, 550, 450]);
 
     % Call the show() function to generate the plot
-    robotPlot = show(Robot, Robot.homeConfiguration, 'Visuals', 'on', 'Collisions', 'on', 'PreservePlot', true);
+    robotPlot = show(Robot, Robot.homeConfiguration, 'Visuals', 'on', 'Collisions', 'off', 'PreservePlot', true);
     
     robotChildren = robotPlot.Children;
     
@@ -251,7 +255,7 @@ function inputs = getCurrentInputs()
 end
 
 function gravitycomp()
- global Joints kinematicModel Robot;
+ global Joints kinematicModel Robot RNEParams;
     qOld=Robot.homeConfiguration;
     q=Robot.randomConfiguration
     params.q0=qOld;
@@ -263,13 +267,28 @@ function gravitycomp()
     params.dt=0.01;
     params.a0=[0,0,0,0,0,0,0]';
     params.a1=[0,0,0,0,0,0,0]';
+    
 
+    RNEParams.G=spatialInertialMatrix(Robot);
+    RNEParams.g=Robot.Gravity;
+    RNEParams.M=kinematicModel.Mlist;
+    RNEParams.S=kinematicModel.S;
+    RNEParams.Ftip=[0,0,0,0,0,0]';
+
+    tauList=[]
     traj=make_trajectory("quintic",params)
     for i = 1:length(traj.q)
         q = traj.q(i,:)
+        RNEParams.jointPos=traj.q(i,:);
+        RNEParams.jointVel=traj.v(i,:);
+        RNEParams.jointAcc=traj.a(i,:);
+        tau=rne(RNEParams);
+        %tau=tau+gravityCompensation(Robot,q);
+        tauList=[tauList,tau];
         drawnow
         pause(0.01)
     end
+    tauList
     % for i=1:11
     % 
     % show(Robot,traj.q(i,:)',Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false)
@@ -358,7 +377,7 @@ end
 
 
 function executeIK(inputs)
-    global kinematicModel Robot robotPanel mainAxes;
+    global kinematicModel Robot robotPanel mainAxes RNEParams;
     disp('Executing Inverse Kinematics');
     
     % Extract pose information from the inputs structure
@@ -394,14 +413,19 @@ function executeIK(inputs)
     params.dt=0.01;
     params.a0=[0,0,0,0,0,0,0]';
     params.a1=[0,0,0,0,0,0,0]';
-    
     traj=make_trajectory("quintic",params)
+    tauList=[]
     for i = 1:length(traj.q)
         q = traj.q(i,:);
         cla(mainAxes);
         % show(Robot,q',Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false)
-        robotPlot = show(Robot, q', 'Visuals', 'on', 'Collisions', 'on', 'PreservePlot', false);
-        
+        robotPlot = show(Robot, q', 'Visuals', 'on', 'Collisions', 'off', 'PreservePlot', false);
+        RNEParams.jointPos=traj.q(i,:);
+        RNEParams.jointVel=traj.v(i,:);
+        RNEParams.jointAcc=traj.a(i,:);
+        tau=rne(RNEParams);
+        %tau=tau+gravityCompensation(Robot,q);
+        tauList=[tauList,tau];
         % Get the children (i.e., graphics objects) of the generated plot
         robotChildren = robotPlot.Children;
         
@@ -423,13 +447,14 @@ function executeIK(inputs)
 
         
         drawnow
-        pause(0.5)
+        pause(0.1)
     end
+    tauList
 end
 
 
 function goHomePosition()
-     global kinematicModel Robot robotPanel mainAxes;
+     global kinematicModel Robot robotPanel mainAxes RNEParams;
     disp('Resetting to Home Position');
     % 
     % % Extract pose information from the inputs structure
@@ -465,7 +490,7 @@ function goHomePosition()
     params.dt=0.01;
     params.a0=[0,0,0,0,0,0,0]';
     params.a1=[0,0,0,0,0,0,0]';
-
+    tauList=[]
     % Robot = Robot.homeConfiguration;
     
     traj=make_trajectory("quintic",params)
@@ -473,11 +498,16 @@ function goHomePosition()
         q = traj.q(i,:);
         cla(mainAxes);
         % show(Robot,q',Visuals="on",Collisions="on",FastUpdate=true,PreservePlot=false)
-        robotPlot = show(Robot, q', 'Visuals', 'on', 'Collisions', 'on', 'PreservePlot', false);
+        robotPlot = show(Robot, q', 'Visuals', 'on', 'Collisions', 'off', 'PreservePlot', false);
         
         % Get the children (i.e., graphics objects) of the generated plot
         robotChildren = robotPlot.Children;
-        
+        RNEParams.jointPos=traj.q(i,:);
+        RNEParams.jointVel=traj.v(i,:);
+        RNEParams.jointAcc=traj.a(i,:);
+        tau=rne(RNEParams);
+        %tau=tau+gravityCompensation(Robot,q);
+        tauList=[tauList,tau];
         % Set the Parent property of the children to mainAxes to plot in the UIAxes
         for i = 1:numel(robotChildren)
             set(robotChildren(i), 'Parent', mainAxes);

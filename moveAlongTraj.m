@@ -22,7 +22,7 @@ RNEParams.Ftip=[0,0,0,0,0,0]';
 traj=make_trajectory("quintic",params)
 for i=1:11
 
-show(Robot,traj.q(i,:)',Visuals="on",Collisions="off",FastUpdate=true,PreservePlot=false)
+%show(Robot,traj.q(i,:)',Visuals="on",Collisions="off",FastUpdate=true,PreservePlot=false)
 RNEParams.jointPos=traj.q(i,:)
 RNEParams.jointVel=traj.v(i,:)
 RNEParams.jointAcc=traj.a(i,:)
